@@ -1,0 +1,1298 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>25 Days, Mekong to Andaman — Lynch Crew Tours</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,400;0,9..144,500;0,9..144,600;1,9..144,500&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  /* ---- Reset & base ---- */
+  * { box-sizing: border-box; -webkit-font-smoothing: antialiased; }
+  html, body { background-color: #F1E9D6; margin: 0; padding: 0; }
+  body { color: #16302B; font-family: 'Inter', sans-serif; font-size: 16px; line-height: 1.5; }
+  h1, h2, h3, p { margin: 0; }
+  svg { display: block; }
+  button { font: inherit; cursor: pointer; border: none; background: none; color: inherit; }
+
+  .bg-texture {
+    background-image: radial-gradient(circle at 1px 1px, rgba(22,48,43,0.06) 1px, transparent 0);
+    background-size: 22px 22px;
+  }
+  .hairline { border-color: rgba(22,48,43,0.15); }
+  .thread { border-top: 1px dashed rgba(201,162,75,0.55); }
+  .tab-btn, .currency-btn { display: inline-block; cursor: pointer; user-select: none; }
+  .tab-btn { transition: color .2s ease, background-color .2s ease; }
+  .tab-btn:hover { background-color: rgba(22,48,43,0.08); }
+  .panel { display: none; }
+  @keyframes rise { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+  .timeline-line { background: linear-gradient(to bottom, rgba(47,111,91,0.05), rgba(47,111,91,0.5) 8%, rgba(47,111,91,0.5) 92%, rgba(47,111,91,0.05)); }
+  .pin-dot { filter: drop-shadow(0 1px 2px rgba(0,0,0,0.25)); }
+  .map-tooltip { opacity: 0; pointer-events: none; transition: opacity .2s ease, transform .2s ease; transform: translateY(4px); }
+  .map-pin:hover .map-tooltip { opacity: 1; transform: translateY(0); }
+  ::selection { background: #C9A24B; color: #16302B; }
+  @media (prefers-reduced-motion: reduce) { .panel { animation: none !important; } }
+  .currency-btn { color: #3E4A50; transition: background-color .2s ease, color .2s ease; }
+  .scene-bg { position: fixed; inset: 0; z-index: -10; overflow: hidden; }
+  .scene-bg svg { width: 100%; height: 100%; }
+  .map-frame { max-width: 460px; margin: 0 auto; }
+  .map-frame svg { display: block; }
+
+  /* ---- Visually-hidden radio inputs (still keyboard/screen-reader accessible) ---- */
+  .sr-radio, .sr-check {
+    position: absolute; width: 1px; height: 1px;
+    padding: 0; margin: -1px; overflow: hidden;
+    clip: rect(0,0,0,0); white-space: nowrap; border: 0;
+  }
+
+  /* ---- Tabs: pure CSS, driven by checked radio state ---- */
+  #tabset-overview:checked ~ #tab-overview,
+  #tabset-daily:checked ~ #tab-daily,
+  #tabset-transport:checked ~ #tab-transport,
+  #tabset-map:checked ~ #tab-map,
+  #tabset-cost:checked ~ #tab-cost {
+    display: block; animation: rise .5s ease both;
+  }
+  #tabset-overview:checked ~ nav label[for="tabset-overview"],
+  #tabset-daily:checked ~ nav label[for="tabset-daily"],
+  #tabset-transport:checked ~ nav label[for="tabset-transport"],
+  #tabset-map:checked ~ nav label[for="tabset-map"],
+  #tabset-cost:checked ~ nav label[for="tabset-cost"] {
+    background-color: #16302B; color: #F1E9D6;
+  }
+  #tabset-daily:checked ~ nav label[for="tabset-daily"] .tab-count { color: #C9A24B; }
+
+  /* ---- Currency toggle: pure CSS, driven by checked radio state ---- */
+  #cur-aud:checked ~ .agency-bar label[for="cur-aud"],
+  #cur-gbp:checked ~ .agency-bar label[for="cur-gbp"] {
+    background-color: #16302B; color: #F1E9D6;
+  }
+  .price-gbp, .curr-gbp-label { display: none; }
+  #cur-gbp:checked ~ section .price-aud,
+  #cur-gbp:checked ~ section .curr-aud-label { display: none; }
+  #cur-gbp:checked ~ section .price-gbp,
+  #cur-gbp:checked ~ section .curr-gbp-label { display: inline; }
+
+  /* ---- Hoi An hotel option toggle: drives selection badges + totals everywhere ---- */
+  .opt2-price, .hotel-bar-2, .tours-bar-2, .flights-bar-2, .transfers-bar-2 { display: none; }
+  #opt-hoian-2:checked ~ section .opt1-price { display: none; }
+  #opt-hoian-2:checked ~ section .opt2-price { display: inline; }
+  #opt-hoian-2:checked ~ section .hotel-bar-1,
+  #opt-hoian-2:checked ~ section .tours-bar-1,
+  #opt-hoian-2:checked ~ section .flights-bar-1,
+  #opt-hoian-2:checked ~ section .transfers-bar-1 { display: none; }
+  #opt-hoian-2:checked ~ section .hotel-bar-2,
+  #opt-hoian-2:checked ~ section .tours-bar-2,
+  #opt-hoian-2:checked ~ section .flights-bar-2,
+  #opt-hoian-2:checked ~ section .transfers-bar-2 { display: block; }
+  .option-card { transition: border-color .2s ease, box-shadow .2s ease; }
+  #opt-hoian-1:checked ~ section .card-1,
+  #opt-hoian-2:checked ~ section .card-2 {
+    border-color: #2F6F5B; box-shadow: 0 0 0 2px rgba(47,111,91,0.22);
+  }
+  .opt-select-label {
+    display: inline-block; margin-top: 0.55rem; padding: 0.3rem 0.7rem;
+    border-radius: 9999px; font-size: 0.72rem; font-weight: 600; cursor: pointer;
+    border: 1px solid rgba(47,111,91,0.4); color: #2F6F5B; user-select: none;
+    transition: background-color .2s ease, color .2s ease, border-color .2s ease;
+  }
+  .opt-select-label:hover { background: rgba(47,111,91,0.08); }
+  .opt-selected-tag { display: none; }
+  #opt-hoian-1:checked ~ section .card-1 .opt-select-label,
+  #opt-hoian-2:checked ~ section .card-2 .opt-select-label {
+    background: #2F6F5B; color: #F1E9D6; border-color: #2F6F5B;
+  }
+  #opt-hoian-1:checked ~ section .card-1 .opt-unselected-tag,
+  #opt-hoian-2:checked ~ section .card-2 .opt-unselected-tag { display: none; }
+  #opt-hoian-1:checked ~ section .card-1 .opt-selected-tag,
+  #opt-hoian-2:checked ~ section .card-2 .opt-selected-tag { display: inline; }
+
+  /* ---- Daily detail: items with show-more ---- */
+  .day-item {
+    background: rgba(255,255,255,0.35);
+    border: 1px solid rgba(22,48,43,0.10);
+    border-radius: 0.5rem;
+    padding: 0.7rem 0.9rem;
+  }
+  .day-item-line { color: #16302B; }
+  .day-oneliner { margin-top: 0.25rem; color: #3E4A50; }
+  .day-simple { padding: 0.15rem 0.1rem; }
+  .day-link { color: #245448; text-decoration: underline; text-decoration-color: rgba(36,84,72,0.35); text-underline-offset: 2px; }
+  .day-link:hover { text-decoration-color: #245448; }
+  .show-more-label {
+    display: inline-block; margin-top: 0.4rem; cursor: pointer; user-select: none;
+    font-size: 0.75rem; font-weight: 500; color: #2F6F5B;
+    border-bottom: 1px dashed rgba(47,111,91,0.5);
+  }
+  .show-more-label:hover { color: #16302B; }
+  .day-expanded {
+    display: none;
+    margin-top: 0.55rem; padding-top: 0.55rem;
+    border-top: 1px dashed rgba(201,162,75,0.4);
+    color: #3E4A50;
+  }
+  .day-expanded p { margin: 0; }
+  .day-url { margin-top: 0.4rem !important; font-size: 0.75rem; }
+  .day-url a { color: #2F6F5B; word-break: break-all; }
+  .sml-less { display: none; }
+  .sr-check:checked ~ .day-expanded { display: block; }
+  .sr-check:checked ~ .show-more-label .sml-more { display: none; }
+  .sr-check:checked ~ .show-more-label .sml-less { display: inline; }
+  .hero-wrap { position: relative; }
+  .hero-svg { position: absolute; inset: 0; width: 100%; height: 100%; }
+  .hero-overlay {
+    position: absolute; inset: 0;
+    background: linear-gradient(to top, rgba(12,27,24,0.78) 0%, rgba(12,27,24,0.25) 55%, rgba(12,27,24,0.05) 100%);
+  }
+  .hero-content {
+    position: relative; z-index: 1;
+    min-height: 240px;
+    padding: 1.75rem 1.5rem;
+    display: flex; flex-direction: column; justify-content: flex-end;
+  }
+  @media (min-width: 640px) {
+    .hero-content { min-height: 320px; padding: 2.5rem 2.5rem 2.25rem; }
+  }
+
+  /* ---- Layout utilities ---- */
+  .relative { position: relative; }
+  .absolute { position: absolute; }
+  .flex { display: flex; }
+  .inline-flex { display: inline-flex; }
+  .grid { display: grid; }
+  .flex-col { flex-direction: column; }
+  .flex-wrap { flex-wrap: wrap; }
+  .items-center { align-items: center; }
+  .items-baseline { align-items: baseline; }
+  .justify-between { justify-content: space-between; }
+  .shrink-0 { flex-shrink: 0; }
+  .overflow-hidden { overflow: hidden; }
+  .overflow-x-auto { overflow-x: auto; }
+  .inline-block { display: inline-block; }
+  .cursor-default { cursor: default; }
+  .mx-auto { margin-left: auto; margin-right: auto; }
+  .w-full { width: 100%; }
+  .w-px { width: 1px; }
+  .w-2 { width: 0.5rem; }
+  .w-3\.5 { width: 0.875rem; }
+  .w-4 { width: 1rem; }
+  .w-16 { width: 4rem; }
+  .h-full { height: 100%; }
+  .h-2 { height: 0.5rem; }
+  .h-2\.5 { height: 0.625rem; }
+  .h-3\.5 { height: 0.875rem; }
+  .max-w-xl { max-width: 36rem; }
+  .max-w-2xl { max-width: 42rem; }
+  .max-w-5xl { max-width: 64rem; }
+  .min-w-\[720px\] { min-width: 720px; }
+  .top-1 { top: 0.25rem; }
+  .top-2 { top: 0.5rem; }
+  .bottom-2 { bottom: 0.5rem; }
+  .left-\[7px\] { left: 7px; }
+  .-left-8 { left: -2rem; }
+
+  /* ---- Gap / space-between ---- */
+  .gap-1\.5 { gap: 0.375rem; }
+  .gap-2 { gap: 0.5rem; }
+  .gap-3 { gap: 0.75rem; }
+  .gap-4 { gap: 1rem; }
+  .gap-x-6 { column-gap: 1.5rem; }
+  .gap-y-1 { row-gap: 0.25rem; }
+  .gap-y-2 { row-gap: 0.5rem; }
+  .space-y-2 > * + * { margin-top: 0.5rem; }
+  .space-y-4 > * + * { margin-top: 1rem; }
+  .space-y-5 > * + * { margin-top: 1.25rem; }
+
+  /* ---- Spacing: margin / padding ---- */
+  .mb-1 { margin-bottom: 0.25rem; }
+  .mb-1\.5 { margin-bottom: 0.375rem; }
+  .mb-3 { margin-bottom: 0.75rem; }
+  .mb-4 { margin-bottom: 1rem; }
+  .mb-6 { margin-bottom: 1.5rem; }
+  .mb-8 { margin-bottom: 2rem; }
+  .mb-9 { margin-bottom: 2.25rem; }
+  .mb-10 { margin-bottom: 2.5rem; }
+  .mt-0\.5 { margin-top: 0.125rem; }
+  .mt-1 { margin-top: 0.25rem; }
+  .mt-2 { margin-top: 0.5rem; }
+  .mt-4 { margin-top: 1rem; }
+  .mt-6 { margin-top: 1.5rem; }
+  .pl-5 { padding-left: 1.25rem; }
+  .pl-8 { padding-left: 2rem; }
+  .pt-4 { padding-top: 1rem; }
+  .p-0\.5 { padding: 0.125rem; }
+  .p-4 { padding: 1rem; }
+  .px-3\.5 { padding-left: 0.875rem; padding-right: 0.875rem; }
+  .px-4 { padding-left: 1rem; padding-right: 1rem; }
+  .px-5 { padding-left: 1.25rem; padding-right: 1.25rem; }
+  .px-6 { padding-left: 1.5rem; padding-right: 1.5rem; }
+  .py-1 { padding-top: 0.25rem; padding-bottom: 0.25rem; }
+  .py-1\.5 { padding-top: 0.375rem; padding-bottom: 0.375rem; }
+  .py-2\.5 { padding-top: 0.625rem; padding-bottom: 0.625rem; }
+  .py-3 { padding-top: 0.75rem; padding-bottom: 0.75rem; }
+  .py-4 { padding-top: 1rem; padding-bottom: 1rem; }
+  .py-6 { padding-top: 1.5rem; padding-bottom: 1.5rem; }
+  .py-10 { padding-top: 2.5rem; padding-bottom: 2.5rem; }
+
+  /* ---- Borders / radius / rings ---- */
+  .border { border: 1px solid rgba(22,48,43,0.15); }
+  .border-t { border-top: 1px solid rgba(22,48,43,0.15); }
+  .border-l-2 { border-left: 2px solid; }
+  .border-dashed { border-style: dashed; }
+  .border-emerald-100 { border-color: #2F6F5B; }
+  .border-sand-50\/10 { border-color: rgba(250,246,236,0.10); }
+  .border-sand-50\/15 { border-color: rgba(250,246,236,0.15); }
+  .border-sand-50\/70 { border-color: rgba(250,246,236,0.70); }
+  .rounded-full { border-radius: 9999px; }
+  .rounded-lg { border-radius: 0.5rem; }
+  .rounded-t-lg { border-top-left-radius: 0.5rem; border-top-right-radius: 0.5rem; }
+  .rounded-xl { border-radius: 0.75rem; }
+  .ring-4 { box-shadow: 0 0 0 4px var(--ring-color, #F1E9D6); }
+  .ring-sand { --ring-color: #F1E9D6; }
+
+  /* ---- Typography ---- */
+  .font-serif { font-family: 'Fraunces', serif; }
+  .font-sans { font-family: 'Inter', sans-serif; }
+  .font-medium { font-weight: 500; }
+  .italic { font-style: italic; }
+  .tracking-wide { letter-spacing: 0.025em; }
+  .leading-none { line-height: 1; }
+  .leading-tight { line-height: 1.25; }
+  .align-top { vertical-align: top; }
+  .text-xs { font-size: 0.75rem; line-height: 1rem; }
+  .text-sm { font-size: 0.875rem; line-height: 1.25rem; }
+  .text-base { font-size: 1rem; line-height: 1.5rem; }
+  .text-lg { font-size: 1.125rem; line-height: 1.75rem; }
+  .text-xl { font-size: 1.25rem; line-height: 1.75rem; }
+  .text-2xl { font-size: 1.5rem; line-height: 2rem; }
+  .text-3xl { font-size: 1.875rem; line-height: 2.25rem; }
+  .text-4xl { font-size: 2.25rem; line-height: 2.5rem; }
+  .text-5xl { font-size: 3rem; line-height: 1; }
+
+  /* ---- Colors ---- */
+  .bg-emerald-100 { background-color: #2F6F5B; }
+  .bg-gold { background-color: #C9A24B; }
+  .bg-ink-100 { background-color: #16302B; }
+  .bg-sand-200\/70 { background-color: rgba(230,217,184,0.70); }
+  .bg-white\/50 { background-color: rgba(255,255,255,0.50); }
+  .text-ink { color: #16302B; }
+  .text-ink-100 { color: #16302B; }
+  .text-ink-100\/50 { color: rgba(22,48,43,0.50); }
+  .text-ink-100\/60 { color: rgba(22,48,43,0.60); }
+  .text-ink-200 { color: #102420; }
+  .text-emerald-100 { color: #2F6F5B; }
+  .text-gold { color: #C9A24B; }
+  .text-sand-50 { color: #FAF6EC; }
+  .text-sand-100\/40 { color: rgba(241,233,214,0.40); }
+  .text-sand-100\/70 { color: rgba(241,233,214,0.70); }
+  .text-sand-100\/90 { color: rgba(241,233,214,0.90); }
+  .text-slate-100 { color: #3E4A50; }
+  .text-slate-100\/70 { color: rgba(62,74,80,0.70); }
+  .text-slate-100\/80 { color: rgba(62,74,80,0.80); }
+
+  /* ---- Responsive (sm: 640px and up) ---- */
+  @media (min-width: 640px) {
+    .sm\:flex-row { flex-direction: row; }
+    .sm\:items-center { align-items: center; }
+    .sm\:justify-between { justify-content: space-between; }
+    .sm\:text-right { text-align: right; }
+    .sm\:border-t-0 { border-top: 0; }
+    .sm\:border-l { border-left: 1px solid rgba(22,48,43,0.15); }
+    .sm\:pt-0 { padding-top: 0; }
+    .sm\:pl-6 { padding-left: 1.5rem; }
+    .sm\:px-8 { padding-left: 2rem; padding-right: 2rem; }
+    .sm\:py-7 { padding-top: 1.75rem; padding-bottom: 1.75rem; }
+    .sm\:py-14 { padding-top: 3.5rem; padding-bottom: 3.5rem; }
+    .sm\:p-6 { padding: 1.5rem; }
+    .sm\:text-2xl { font-size: 1.5rem; line-height: 2rem; }
+    .sm\:text-5xl { font-size: 3rem; line-height: 1; }
+    .sm\:grid-cols-2 { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+    .sm\:grid-cols-4 { grid-template-columns: repeat(4, minmax(0, 1fr)); }
+  }
+</style>
+</head>
+<body class="bg-texture text-ink font-sans">
+
+<!-- Fixed decorative background scene: dawn over the delta, drawn as original vector art -->
+<div class="scene-bg" aria-hidden="true">
+  <svg viewBox="0 0 1440 900" preserveAspectRatio="xMidYMid slice" xmlns="http://www.w3.org/2000/svg">
+    <defs>
+      <linearGradient id="skyGrad" x1="0" y1="0" x2="0" y2="1">
+        <stop offset="0%" stop-color="#F1E9D6"/>
+        <stop offset="55%" stop-color="#EEE3C7"/>
+        <stop offset="100%" stop-color="#E6D9B8"/>
+      </linearGradient>
+    </defs>
+    <rect width="1440" height="900" fill="url(#skyGrad)"/>
+    <!-- sun -->
+    <circle cx="1180" cy="220" r="90" fill="#C9A24B" opacity="0.16"/>
+    <circle cx="1180" cy="220" r="46" fill="#C9A24B" opacity="0.22"/>
+    <!-- far karst mountains -->
+    <path d="M0,430 C120,370 210,410 300,380 C400,346 470,400 560,370 C660,336 740,390 840,368 C950,342 1030,400 1140,378 C1260,354 1340,400 1440,384 L1440,900 L0,900 Z" fill="#2F6F5B" opacity="0.10"/>
+    <!-- mid karst mountains -->
+    <path d="M0,520 C100,470 180,500 260,478 C360,452 430,500 520,480 C630,456 700,500 800,482 C920,460 1000,502 1110,484 C1230,464 1330,504 1440,486 L1440,900 L0,900 Z" fill="#2F6F5B" opacity="0.16"/>
+    <!-- temple roofline silhouette -->
+    <path d="M120,620 L150,590 L180,620 L200,600 L235,600 L255,570 L275,600 L310,600 L330,585 L350,600 L390,600 L390,640 L120,640 Z" fill="#16302B" opacity="0.10"/>
+    <!-- palm cluster -->
+    <g opacity="0.14" fill="#16302B">
+      <path d="M1290,650 C1270,630 1250,635 1235,650 C1255,640 1270,645 1285,660 Z"/>
+      <path d="M1290,650 C1310,630 1330,635 1345,650 C1325,640 1310,645 1295,660 Z"/>
+      <path d="M1290,650 C1280,625 1265,610 1250,600 C1272,610 1285,625 1292,648 Z"/>
+      <path d="M1290,650 C1300,625 1315,610 1330,600 C1308,610 1295,625 1288,648 Z"/>
+      <rect x="1286" y="648" width="8" height="90" rx="3"/>
+    </g>
+    <!-- junk boat -->
+    <g opacity="0.14" fill="#16302B">
+      <path d="M560,700 L520,730 L660,730 L640,700 Z"/>
+      <path d="M578,700 L578,650 L610,668 L578,690 Z"/>
+      <path d="M578,650 L578,700" stroke="#16302B" stroke-width="2" fill="none"/>
+    </g>
+    <!-- waterline -->
+    <path d="M0,760 C120,745 220,762 340,748 C460,734 560,754 680,742 C800,730 900,750 1020,738 C1140,726 1260,748 1440,734 L1440,900 L0,900 Z" fill="#2F6F5B" opacity="0.12"/>
+    <path d="M0,820 C140,808 260,822 400,812 C540,802 660,818 800,808 C940,798 1060,816 1200,806 C1300,799 1380,812 1440,806 L1440,900 L0,900 Z" fill="#2F6F5B" opacity="0.08"/>
+  </svg>
+</div>
+
+<div class="max-w-5xl mx-auto px-5 sm:px-8 py-10 sm:py-14 relative">
+
+  <!-- Hidden radio inputs driving all interactivity via CSS — no JavaScript required -->
+  <input type="radio" name="tabset" id="tabset-overview" class="sr-radio" checked>
+  <input type="radio" name="tabset" id="tabset-daily" class="sr-radio">
+  <input type="radio" name="tabset" id="tabset-transport" class="sr-radio">
+  <input type="radio" name="tabset" id="tabset-map" class="sr-radio">
+  <input type="radio" name="tabset" id="tabset-cost" class="sr-radio">
+  <input type="radio" name="currency" id="cur-aud" class="sr-radio" checked>
+  <input type="radio" name="currency" id="cur-gbp" class="sr-radio">
+  <input type="radio" name="hoian-hotel" id="opt-hoian-1" class="sr-radio" checked>
+  <input type="radio" name="hoian-hotel" id="opt-hoian-2" class="sr-radio">
+
+  <!-- Agency bar -->
+  <div class="agency-bar flex flex-wrap items-center justify-between gap-4 mb-6">
+    <div class="flex items-center gap-3">
+      <svg width="44" height="44" viewBox="0 0 44 44" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+        <circle cx="22" cy="22" r="21" fill="#16302B" stroke="#C9A24B" stroke-width="1.5"/>
+        <circle cx="22" cy="17" r="6.5" fill="#C9A24B" opacity="0.92"/>
+        <path d="M7,28 q3.5,-4.5 7,0 q3.5,-4.5 7,0 q3.5,-4.5 7,0 q3.5,-4.5 7,0" stroke="#F1E9D6" stroke-width="1.4" fill="none" opacity="0.85"/>
+        <path d="M7,32.5 q3.5,-4.5 7,0 q3.5,-4.5 7,0 q3.5,-4.5 7,0 q3.5,-4.5 7,0" stroke="#3E8570" stroke-width="1.4" fill="none" opacity="0.7"/>
+      </svg>
+      <p class="font-serif text-lg text-ink-200 leading-none">Lynch Crew Tours</p>
+    </div>
+
+    <div class="inline-flex rounded-full bg-white/50 border hairline p-0.5 text-sm" role="group" aria-label="Currency">
+      <label for="cur-aud" class="currency-btn px-3.5 py-1.5 rounded-full font-medium">AUD</label>
+      <label for="cur-gbp" class="currency-btn px-3.5 py-1.5 rounded-full font-medium">GBP</label>
+    </div>
+  </div>
+
+  <!-- Header -->
+  <header class="hero-wrap rounded-xl overflow-hidden mb-10">
+    <svg class="hero-svg" viewBox="0 0 1200 480" preserveAspectRatio="xMidYMid slice" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+      <defs>
+        <linearGradient id="heroSky" x1="0" y1="0" x2="0" y2="1">
+          <stop offset="0%" stop-color="#0F2E2B"/>
+          <stop offset="42%" stop-color="#2F6F5B"/>
+          <stop offset="75%" stop-color="#C9A24B"/>
+          <stop offset="100%" stop-color="#E8B15E"/>
+        </linearGradient>
+        <radialGradient id="heroSun" cx="50%" cy="50%" r="50%">
+          <stop offset="0%" stop-color="#FCE7B8" stop-opacity="0.95"/>
+          <stop offset="100%" stop-color="#FCE7B8" stop-opacity="0"/>
+        </radialGradient>
+      </defs>
+      <rect width="1200" height="480" fill="url(#heroSky)"/>
+      <circle cx="860" cy="230" r="140" fill="url(#heroSun)"/>
+      <circle cx="860" cy="230" r="58" fill="#FCE7B8" opacity="0.9"/>
+      <!-- far mountains -->
+      <path d="M0,300 C100,260 200,290 300,265 C420,235 520,280 640,255 C760,230 860,270 980,250 C1080,235 1150,265 1200,255 L1200,480 L0,480 Z" fill="#16302B" opacity="0.35"/>
+      <!-- near mountains -->
+      <path d="M0,360 C120,320 230,350 340,330 C460,308 560,345 680,325 C800,305 900,340 1020,322 C1110,308 1170,335 1200,325 L1200,480 L0,480 Z" fill="#102420" opacity="0.55"/>
+      <!-- water reflection lines -->
+      <g opacity="0.25" stroke="#FCE7B8" stroke-width="2">
+        <line x1="760" y1="400" x2="960" y2="400"/>
+        <line x1="790" y1="412" x2="930" y2="412"/>
+        <line x1="810" y1="424" x2="910" y2="424"/>
+      </g>
+      <!-- junk boat -->
+      <g fill="#0C1B18" opacity="0.85">
+        <path d="M330,392 L280,420 L430,420 L400,392 Z"/>
+        <path d="M352,392 L352,340 L392,360 L352,382 Z"/>
+        <rect x="350" y="340" width="3" height="52"/>
+      </g>
+      <!-- second, smaller boat -->
+      <g fill="#0C1B18" opacity="0.6">
+        <path d="M980,410 L950,428 L1040,428 L1020,410 Z"/>
+        <path d="M995,410 L995,378 L1018,392 L995,405 Z"/>
+      </g>
+      <!-- foreground water -->
+      <path d="M0,430 C150,415 300,438 450,420 C600,405 750,432 900,415 C1000,405 1100,425 1200,412 L1200,480 L0,480 Z" fill="#0C1B18" opacity="0.5"/>
+    </svg>
+    <div class="hero-overlay"></div>
+    <div class="hero-content">
+      <p class="text-gold font-medium text-sm tracking-wide">Vietnam &middot; Cambodia &middot; Thailand</p>
+      <h1 class="font-serif text-4xl sm:text-5xl text-sand-50 mt-1 leading-tight">Mekong to Andaman</h1>
+      <p class="font-serif italic text-xl sm:text-2xl text-sand-100/90 mt-1">A twenty-five day route for two, built for February</p>
+    </div>
+  </header>
+
+  <!-- Tabs -->
+  <nav class="flex flex-wrap gap-2 mb-8" aria-label="Itinerary sections">
+    <label class="tab-btn rounded-t-lg px-4 py-2.5 text-sm font-medium text-ink-100 bg-sand-200/70" for="tabset-overview">
+      Overview
+    </label>
+    <label class="tab-btn rounded-t-lg px-4 py-2.5 text-sm font-medium text-ink-100 bg-sand-200/70" for="tabset-daily">
+      Daily detail <span class="tab-count text-ink-100/60">&middot; 25d</span>
+    </label>
+    <label class="tab-btn rounded-t-lg px-4 py-2.5 text-sm font-medium text-ink-100 bg-sand-200/70" for="tabset-transport">
+      Transport
+    </label>
+    <label class="tab-btn rounded-t-lg px-4 py-2.5 text-sm font-medium text-ink-100 bg-sand-200/70" for="tabset-map">
+      Route map
+    </label>
+    <label class="tab-btn rounded-t-lg px-4 py-2.5 text-sm font-medium text-ink-100 bg-sand-200/70" for="tabset-cost">
+      Cost breakdown
+    </label>
+  </nav>
+
+  <!-- ============ TAB 1: OVERVIEW ============ -->
+  <section id="tab-overview" class="panel" role="tabpanel">
+
+    <div class="grid sm:grid-cols-4 gap-3 mb-8">
+      <div class="bg-white/50 border hairline rounded-lg px-4 py-3">
+        <p class="text-xs text-slate-100/80">Travelling as</p>
+        <p class="font-serif text-lg text-ink-200 mt-0.5">A couple</p>
+      </div>
+      <div class="bg-white/50 border hairline rounded-lg px-4 py-3">
+        <p class="text-xs text-slate-100/80">Trip style</p>
+        <p class="font-serif text-lg text-ink-200 mt-0.5">Premium / luxury</p>
+      </div>
+      <div class="bg-white/50 border hairline rounded-lg px-4 py-3">
+        <p class="text-xs text-slate-100/80">Season</p>
+        <p class="font-serif text-lg text-ink-200 mt-0.5">February, peak dry</p>
+      </div>
+      <div class="bg-white/50 border hairline rounded-lg px-4 py-3">
+        <p class="text-xs text-slate-100/80">Airlines</p>
+        <p class="font-serif text-lg text-ink-200 mt-0.5">Full-service only</p>
+      </div>
+    </div>
+
+    <h2 class="font-serif text-2xl text-ink-200 mb-4">Three phases, one route</h2>
+    <div class="space-y-4 mb-10">
+      <div class="flex gap-4 border-l-2 border-emerald-100 pl-5 py-1">
+        <div class="font-serif text-2xl text-emerald-100 w-16 shrink-0">01</div>
+        <div>
+          <p class="font-medium text-ink-200">Vietnam, north to centre &mdash; Days 1&ndash;11</p>
+          <p class="text-sm text-slate-100 mt-1 max-w-xl">Hanoi's old quarter, a night at anchor in Lan Ha Bay, a private sleeper south, then the imperial calm of Hue and the lantern-lit river town of Hoi An.</p>
+        </div>
+      </div>
+      <div class="flex gap-4 border-l-2 border-emerald-100 pl-5 py-1">
+        <div class="font-serif text-2xl text-emerald-100 w-16 shrink-0">02</div>
+        <div>
+          <p class="font-medium text-ink-200">South Vietnam &amp; Cambodia &mdash; Days 12&ndash;20</p>
+          <p class="text-sm text-slate-100 mt-1 max-w-xl">Saigon's energy, a slow float through the Mekong Delta's floating markets, the crossing into Cambodia, and sunrise over Angkor.</p>
+        </div>
+      </div>
+      <div class="flex gap-4 border-l-2 border-emerald-100 pl-5 py-1">
+        <div class="font-serif text-2xl text-emerald-100 w-16 shrink-0">03</div>
+        <div>
+          <p class="font-medium text-ink-200">Phuket &mdash; Days 21&ndash;25</p>
+          <p class="text-sm text-slate-100 mt-1 max-w-xl">Five days to slow down entirely: a private pool villa, the limestone islands of Phang Nga Bay, and a couple's ritual at the resort spa.</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="bg-ink-100 rounded-xl px-6 py-6 sm:px-8 sm:py-7 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+      <div>
+        <p class="text-gold text-sm tracking-wide">Estimated trip total</p>
+        <p class="font-serif text-4xl sm:text-5xl text-sand-50 mt-1"><span class="opt1-price"><span class="price-aud">$13,500</span><span class="price-gbp">£7,155</span></span><span class="opt2-price"><span class="price-aud">$12,750</span><span class="price-gbp">£6,758</span></span> <span class="text-xl align-top curr-aud-label">AUD</span><span class="text-xl align-top curr-gbp-label">GBP</span></p>
+        <p class="text-sand-100/70 text-sm mt-1">For two travellers, land and regional-air only</p>
+      </div>
+      <div class="sm:text-right border-t sm:border-t-0 sm:border-l border-sand-50/15 pt-4 sm:pt-0 sm:pl-6">
+        <p class="text-sand-100/70 text-sm">Per person, per day</p>
+        <p class="font-serif text-2xl text-sand-50 mt-1">&asymp; <span class="opt1-price"><span class="price-aud">$270</span><span class="price-gbp">£143</span></span><span class="opt2-price"><span class="price-aud">$255</span><span class="price-gbp">£135</span></span> <span class="curr-aud-label">AUD</span><span class="curr-gbp-label">GBP</span></p>
+      </div>
+    </div>
+
+    <div class="bg-white/50 border hairline rounded-lg px-5 py-4 mt-4">
+      <p class="text-sm text-slate-100"><span class="font-medium text-ink-200">Note:</span> The accommodation and activities are guides only and many don&rsquo;t have pricing yet for Feb 28. There are lots of options for hotels. For Hoi An I&rsquo;ve listed both a hotel and Airbnb as alternatives (this is the Airbnb Nicole used and looks excellent). We can also look at doing Airbnb as an alternative in Phuket.</p>
+    </div>
+
+  </section>
+
+
+  <!-- ============ TAB 2: DAILY DETAIL ============ -->
+  <section id="tab-daily" class="panel" role="tabpanel">
+    <h2 class="font-serif text-2xl text-ink-200 mb-1">Day by day</h2>
+    <p class="text-sm text-slate-100 mb-8">Twenty-five days, chronologically, with stays, bookings, and the story behind each one.</p>
+
+    <div class="relative pl-8">
+      <div class="absolute left-[7px] top-2 bottom-2 w-px timeline-line"></div>
+
+      <div class="relative mb-8">
+        <div class="absolute -left-8 top-1 w-3.5 h-3.5 rounded-full bg-emerald-100 ring-4 ring-sand"></div>
+        <p class="text-xs text-emerald-100 font-medium mb-1">Days 1&ndash;2</p>
+        <h3 class="font-serif text-xl text-ink-200">Hanoi</h3>
+        <div class="mt-2 space-y-2 text-sm text-slate-100 max-w-2xl">
+          <div class="day-item">
+            <p class="day-item-line"><span class="text-ink-100/50">Hotel</span> &mdash; <a href="https://lasiestahotels.com/mamay" target="_blank" rel="noopener" class="day-link">La Siesta Classic Ma May</a>, <span class="price-aud">$190</span><span class="price-gbp">£101</span>/night</p>
+            <p class="day-oneliner">A boutique luxury oasis nestled right in the pulsating heart of Hanoi&rsquo;s historic Old Quarter.</p>
+            <input type="checkbox" class="sr-check" id="more-hotel-1">
+            <label for="more-hotel-1" class="show-more-label"><span class="sml-more">Show more</span><span class="sml-less">Show less</span></label>
+            <div class="day-expanded">
+              <p>Boasting a striking white colonial exterior and warm, Asian-inspired art deco interiors, this premium property provides a peaceful escape from the busy streets. Features an award-winning spa and the acclaimed Moonlight Sky Bar on the roof.</p>
+              <p class="day-url"><a href="https://lasiestahotels.com/mamay" target="_blank" rel="noopener">https://lasiestahotels.com/mamay</a></p>
+            </div>
+          </div>
+          <div class="day-item">
+            <p class="day-item-line"><span class="text-ink-100/50">Activity</span> &mdash; <a href="https://hanoibackstreettours.com" target="_blank" rel="noopener" class="day-link">Hanoi Backstreet Scooter Tour</a>, <span class="price-aud">$85</span><span class="price-gbp">£45</span>pp</p>
+            <p class="day-oneliner">An adrenaline-fuelled evening food crawl navigating Hanoi&rsquo;s hidden alleyways on vintage scooters.</p>
+            <input type="checkbox" class="sr-check" id="more-activity-2">
+            <label for="more-activity-2" class="show-more-label"><span class="sml-more">Show more</span><span class="sml-less">Show less</span></label>
+            <div class="day-expanded">
+              <p>Safely guided by expert drivers, you will zoom past hidden landmarks, ride right along the operational train tracks, and stop at authentic family-run stalls to sample bun cha, egg coffee, and fresh banh mi.</p>
+              <p class="day-url"><a href="https://hanoibackstreettours.com" target="_blank" rel="noopener">https://hanoibackstreettours.com</a></p>
+            </div>
+          </div>
+          <div class="day-item">
+            <p class="day-item-line"><span class="text-ink-100/50">Activity</span> &mdash; <a href="https://withlocals.com" target="_blank" rel="noopener" class="day-link">Private City Highlights with WithLocals</a>, <span class="price-aud">$95</span><span class="price-gbp">£50</span>pp</p>
+            <p class="day-oneliner">A fully customisable, privately guided cultural immersion through Hanoi&rsquo;s heavy-hitting historic sites.</p>
+            <input type="checkbox" class="sr-check" id="more-activity-3">
+            <label for="more-activity-3" class="show-more-label"><span class="sml-more">Show more</span><span class="sml-less">Show less</span></label>
+            <div class="day-expanded">
+              <p>Skip the tour buses and explore the Ho Chi Minh Mausoleum complex, the historic Temple of Literature, and the iconic Tran Quoc Pagoda alongside a local historian guide who tailors the pace to you.</p>
+              <p class="day-url"><a href="https://withlocals.com" target="_blank" rel="noopener">https://withlocals.com</a></p>
+            </div>
+          </div>
+          <div class="day-item">
+            <p class="day-item-line"><span class="text-ink-100/50">Activity</span> &mdash; <a href="https://thanglongwaterpuppet.com" target="_blank" rel="noopener" class="day-link">Thang Long Water Puppet Show VIP Seats</a>, <span class="price-aud">$15</span><span class="price-gbp">£8</span>pp</p>
+            <p class="day-oneliner">Front-row VIP seats to a world-renowned ancient Vietnamese art form performed live on water.</p>
+            <input type="checkbox" class="sr-check" id="more-activity-25">
+            <label for="more-activity-25" class="show-more-label"><span class="sml-more">Show more</span><span class="sml-less">Show less</span></label>
+            <div class="day-expanded">
+              <p>Experience a beautiful century-old performance where traditional wooden puppets skip across a pool of water, accompanied by a live traditional operatic orchestra. These reserved front-row VIP seats guarantee the best view and acoustics away from the standard crowded general admission rows.</p>
+              <p class="day-url"><a href="https://thanglongwaterpuppet.com" target="_blank" rel="noopener">https://thanglongwaterpuppet.com</a></p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="relative mb-8">
+        <div class="absolute -left-8 top-1 w-3.5 h-3.5 rounded-full bg-emerald-100 ring-4 ring-sand"></div>
+        <p class="text-xs text-emerald-100 font-medium mb-1">Days 3&ndash;4</p>
+        <h3 class="font-serif text-xl text-ink-200">Lan Ha Bay</h3>
+        <div class="mt-2 space-y-2 text-sm text-slate-100 max-w-2xl">
+          <div class="day-item">
+            <p class="day-item-line"><span class="text-ink-100/50">Transfer</span> &mdash; Luxury D-Car, <span class="price-aud">$50</span><span class="price-gbp">£27</span>pp</p>
+          </div>
+          <div class="day-item">
+            <p class="day-item-line"><span class="text-ink-100/50">Cruise</span> &mdash; <a href="https://ambassadorcruise.com" target="_blank" rel="noopener" class="day-link">Ambassador Signature Cruise</a>, <span class="price-aud">$450</span><span class="price-gbp">£239</span>/night, meals incl.</p>
+            <p class="day-oneliner">A 5-star ultra-luxury boutique cruise exploring the quieter, pristine waters of Lan Ha Bay.</p>
+            <input type="checkbox" class="sr-check" id="more-cruise-4">
+            <label for="more-cruise-4" class="show-more-label"><span class="sml-more">Show more</span><span class="sml-less">Show less</span></label>
+            <div class="day-expanded">
+              <p>Features massive private balcony suites, floor-to-ceiling windows, and fine dining. Avoids the standard tourist tracks of Halong Bay while taking you past dramatic karst formations, floating fishing villages, and hidden swimming spots. Includes premium return D-Car limousine transfers from Hanoi.</p>
+              <p class="day-url"><a href="https://ambassadorcruise.com" target="_blank" rel="noopener">https://ambassadorcruise.com</a></p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="relative mb-8">
+        <div class="absolute -left-8 top-1 w-3.5 h-3.5 rounded-full bg-gold ring-4 ring-sand"></div>
+        <p class="text-xs text-emerald-100 font-medium mb-1">Day 5</p>
+        <h3 class="font-serif text-xl text-ink-200">Transit night</h3>
+        <div class="mt-2 space-y-2 text-sm text-slate-100 max-w-2xl">
+          <p class="day-simple"><span class="text-ink-100/50">By day</span> &mdash; day-use cafe near the station</p>
+          <div class="day-item">
+            <p class="day-item-line"><span class="text-ink-100/50">Sleeper</span> &mdash; <a href="https://lamanexpress.com" target="_blank" rel="noopener" class="day-link">SE19 Private 2-Berth VIP Cabin via Laman Express</a>, <span class="price-aud">$210</span><span class="price-gbp">£111</span> total</p>
+            <p class="day-oneliner">A premium, privately managed overnight rail cabin whisking you south to the imperial capital of Hue.</p>
+            <input type="checkbox" class="sr-check" id="more-sleeper-5">
+            <label for="more-sleeper-5" class="show-more-label"><span class="sml-more">Show more</span><span class="sml-less">Show less</span></label>
+            <div class="day-expanded">
+              <p>Bypasses standard state carriage conditions by offering a fully retrofitted VIP timber-lined cabin for two. Includes private air conditioning, upgraded soft bedding, a welcome bottle of wine, high-quality snacks, and dedicated cabin service.</p>
+              <p class="day-url"><a href="https://lamanexpress.com" target="_blank" rel="noopener">https://lamanexpress.com</a></p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="relative mb-8">
+        <div class="absolute -left-8 top-1 w-3.5 h-3.5 rounded-full bg-emerald-100 ring-4 ring-sand"></div>
+        <p class="text-xs text-emerald-100 font-medium mb-1">Day 6</p>
+        <h3 class="font-serif text-xl text-ink-200">Hue</h3>
+        <div class="mt-2 space-y-2 text-sm text-slate-100 max-w-2xl">
+          <div class="day-item">
+            <p class="day-item-line"><span class="text-ink-100/50">Hotel</span> &mdash; <a href="https://azerai.com/azerai-la-residence-hue" target="_blank" rel="noopener" class="day-link">Azerai La Residence Hue</a>, <span class="price-aud">$290</span><span class="price-gbp">£154</span>/night</p>
+            <p class="day-oneliner">An enchanting 1930s French colonial governor&rsquo;s mansion sprawling along the fabled Perfume River.</p>
+            <input type="checkbox" class="sr-check" id="more-hotel-6">
+            <label for="more-hotel-6" class="show-more-label"><span class="sml-more">Show more</span><span class="sml-less">Show less</span></label>
+            <div class="day-expanded">
+              <p>A living art deco museum boasting a massive saltwater pool, pristine tropical gardens, and stunning views of the Imperial Citadel. It offers an unmatched romantic atmosphere a step away from the central monuments.</p>
+              <p class="day-url"><a href="https://azerai.com/azerai-la-residence-hue" target="_blank" rel="noopener">https://azerai.com/azerai-la-residence-hue</a></p>
+            </div>
+          </div>
+          <div class="day-item">
+            <p class="day-item-line"><span class="text-ink-100/50">Activity</span> &mdash; <a href="https://huesmiletours.com" target="_blank" rel="noopener" class="day-link">Private Citadel &amp; Royal Tombs Tour by Hue Smile Tours</a>, <span class="price-aud">$75</span><span class="price-gbp">£40</span>pp</p>
+            <p class="day-oneliner">A private exploration of Vietnam&rsquo;s ancient royal past across imperial palaces and ornate dynastic tombs.</p>
+            <input type="checkbox" class="sr-check" id="more-activity-7">
+            <label for="more-activity-7" class="show-more-label"><span class="sml-more">Show more</span><span class="sml-less">Show less</span></label>
+            <div class="day-expanded">
+              <p>Spend the afternoon uncovering the sprawling Forbidden Purple City and the architectural masterworks of the Khai Dinh and Tu Duc royal tombs with a specialised local guide and private driver.</p>
+              <p class="day-url"><a href="https://huesmiletours.com" target="_blank" rel="noopener">https://huesmiletours.com</a></p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="relative mb-8">
+        <div class="absolute -left-8 top-1 w-3.5 h-3.5 rounded-full bg-emerald-100 ring-4 ring-sand"></div>
+        <p class="text-xs text-emerald-100 font-medium mb-1">Days 7&ndash;11</p>
+        <h3 class="font-serif text-xl text-ink-200">Hoi An</h3>
+        <div class="mt-2 space-y-2 text-sm text-slate-100 max-w-2xl">
+          <div class="day-item">
+            <p class="day-item-line"><span class="text-ink-100/50">Transfer</span> &mdash; <a href="https://www.booking.com" target="_blank" rel="noopener" class="day-link">Private Hai Van Pass Car Transfer</a>, <span class="price-aud">$110</span><span class="price-gbp">£58</span> total</p>
+            <p class="day-oneliner">A scenic, private door-to-door drive from Hue to Hoi An over the world-famous coastal mountain pass.</p>
+            <input type="checkbox" class="sr-check" id="more-transfer-9">
+            <label for="more-transfer-9" class="show-more-label"><span class="sml-more">Show more</span><span class="sml-less">Show less</span></label>
+            <div class="day-expanded">
+              <p>Cruise over the dramatic peaks of the Hai Van Pass made famous by Top Gear, with custom stops for photos, lunch overlooking Lang Co Bay, and a visit to the Marble Mountains.</p>
+              <p class="day-url"><a href="https://www.booking.com" target="_blank" rel="noopener">https://www.booking.com</a></p>
+            </div>
+          </div>
+          <div class="grid sm:grid-cols-2 gap-2">
+            <div class="day-item option-card card-1">
+              <p class="day-item-line"><span class="text-ink-100/50">Option 1</span> &mdash; <a href="https://www.anantara.com/en/hoi-an" target="_blank" rel="noopener" class="day-link">Anantara Hoi An Resort</a>, <span class="price-aud">$500</span><span class="price-gbp">£265</span>/night</p>
+              <p class="day-oneliner">Elegant French-colonial boutique luxury set directly on the banks of the scenic Thu Bon River.</p>
+              <input type="checkbox" class="sr-check" id="more-hotel-8">
+              <label for="more-hotel-8" class="show-more-label"><span class="sml-more">Show more</span><span class="sml-less">Show less</span></label>
+              <div class="day-expanded">
+                <p>Located less than a kilometre from the UNESCO World Heritage ancient quarter, featuring lush courtyard gardens, riverfront dining, split-level suites, and a premium day spa.</p>
+                <p class="day-url"><a href="https://www.anantara.com/en/hoi-an" target="_blank" rel="noopener">https://www.anantara.com/en/hoi-an</a></p>
+              </div>
+              <label for="opt-hoian-1" class="opt-select-label"><span class="opt-unselected-tag">Select this option</span><span class="opt-selected-tag">&#10003; Selected</span></label>
+            </div>
+            <div class="day-item option-card card-2">
+              <p class="day-item-line"><span class="text-ink-100/50">Option 2</span> &mdash; <a href="https://www.airbnb.co.uk/rooms/782855105606685336?adults=4&amp;check_in=2027-02-09&amp;search_mode=regular_search&amp;amenities%5B%5D=7&amp;source_impression_id=p3_1769712545_P3fME_MXWm962Qk_&amp;previous_page_section_name=1000&amp;federated_search_id=bee79328-2407-4e40-8362-a960a72bddad&amp;review_page_entrypoint=show_all&amp;guests=4&amp;check_out=2027-02-13&amp;modal=PHOTO_TOUR_SCROLLABLE&amp;modalItem=2138235644" target="_blank" rel="noopener" class="day-link">Airbnb</a>, <span class="price-aud">$350</span><span class="price-gbp">£186</span>/night</p>
+              <label for="opt-hoian-2" class="opt-select-label"><span class="opt-unselected-tag">Select this option</span><span class="opt-selected-tag">&#10003; Selected</span></label>
+            </div>
+          </div>
+          <div class="day-item">
+            <p class="day-item-line"><span class="text-ink-100/50">Activity</span> &mdash; <a href="https://withlocals.com" target="_blank" rel="noopener" class="day-link">Private Ancient Town Walking &amp; Lantern Boat Cruise</a>, <span class="price-aud">$45</span><span class="price-gbp">£24</span>pp</p>
+            <p class="day-oneliner">An atmospheric evening walking tour culminating in a private wooden boat cruise under thousands of lanterns.</p>
+            <input type="checkbox" class="sr-check" id="more-activity-10">
+            <label for="more-activity-10" class="show-more-label"><span class="sml-more">Show more</span><span class="sml-less">Show less</span></label>
+            <div class="day-expanded">
+              <p>Explore perfectly preserved Chinese assembly halls and the Japanese Covered Bridge before boarding a private wooden sampan boat to glide down the river and release floating paper lanterns.</p>
+              <p class="day-url"><a href="https://withlocals.com" target="_blank" rel="noopener">https://withlocals.com</a></p>
+            </div>
+          </div>
+          <div class="day-item">
+            <p class="day-item-line"><span class="text-ink-100/50">Activity</span> &mdash; <a href="https://redbridgevietnam.com" target="_blank" rel="noopener" class="day-link">Red Bridge Cooking School Masterclass</a>, <span class="price-aud">$65</span><span class="price-gbp">£34</span>pp</p>
+            <p class="day-oneliner">A hands-on gourmet culinary journey from a bustling local market straight to a riverside kitchen.</p>
+            <input type="checkbox" class="sr-check" id="more-activity-11">
+            <label for="more-activity-11" class="show-more-label"><span class="sml-more">Show more</span><span class="sml-less">Show less</span></label>
+            <div class="day-expanded">
+              <p>Includes a guided tour of Hoi An&rsquo;s central market to select fresh herbs, a boat ride down the river to a secluded organic garden, and a masterclass where you cook iconic dishes like pho and crispy Banh Xeo pancakes.</p>
+              <p class="day-url"><a href="https://redbridgevietnam.com" target="_blank" rel="noopener">https://redbridgevietnam.com</a></p>
+            </div>
+          </div>
+          <div class="day-item">
+            <p class="day-item-line"><span class="text-ink-100/50">Activity</span> &mdash; <a href="https://sunworld.vn" target="_blank" rel="noopener" class="day-link">Golden Bridge &amp; Ba Na Hills Excursion</a>, <span class="price-aud">$120</span><span class="price-gbp">£64</span>pp</p>
+            <p class="day-oneliner">A private day trip up into the misty mountains to walk across the famous giant stone hands.</p>
+            <input type="checkbox" class="sr-check" id="more-activity-12">
+            <label for="more-activity-12" class="show-more-label"><span class="sml-more">Show more</span><span class="sml-less">Show less</span></label>
+            <div class="day-expanded">
+              <p>Includes a private car to the base stations, tickets for the record-breaking cable car system, and access to the iconic Golden Bridge walk before the afternoon crowds arrive.</p>
+              <p class="day-url"><a href="https://sunworld.vn" target="_blank" rel="noopener">https://sunworld.vn</a></p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="relative mb-8">
+        <div class="absolute -left-8 top-1 w-3.5 h-3.5 rounded-full bg-emerald-100 ring-4 ring-sand"></div>
+        <p class="text-xs text-emerald-100 font-medium mb-1">Days 12&ndash;13</p>
+        <h3 class="font-serif text-xl text-ink-200">Saigon</h3>
+        <div class="mt-2 space-y-2 text-sm text-slate-100 max-w-2xl">
+          <div class="day-item">
+            <p class="day-item-line"><span class="text-ink-100/50">Flight</span> &mdash; Flight 1, Danang to Saigon, Vietnam Airlines, <span class="price-aud">$110</span><span class="price-gbp">£58</span>pp</p>
+          </div>
+          <div class="day-item">
+            <p class="day-item-line"><span class="text-ink-100/50">Hotel</span> &mdash; <a href="https://www.thereveriesaigon.com" target="_blank" rel="noopener" class="day-link">The Reverie Saigon</a>, <span class="price-aud">$325</span><span class="price-gbp">£172</span>/night</p>
+            <p class="day-oneliner">An opulent, high-design 6-star luxury hotel towering over the heart of District 1.</p>
+            <input type="checkbox" class="sr-check" id="more-hotel-13">
+            <label for="more-hotel-13" class="show-more-label"><span class="sml-more">Show more</span><span class="sml-less">Show less</span></label>
+            <div class="day-expanded">
+              <p>Occupying the top floors of the Times Square building, this property showcases jaw-dropping Italian craftsmanship, vibrant mosaics, seven-metre vaulted ceilings, and unparalleled panoramic views of the city skyline.</p>
+              <p class="day-url"><a href="https://www.thereveriesaigon.com" target="_blank" rel="noopener">https://www.thereveriesaigon.com</a></p>
+            </div>
+          </div>
+          <div class="day-item">
+            <p class="day-item-line"><span class="text-ink-100/50">Activity</span> &mdash; <a href="https://lesrivesexperience.com" target="_blank" rel="noopener" class="day-link">Les Rives VIP Speedboat, Cu Chi Tunnels</a>, <span class="price-aud">$140</span><span class="price-gbp">£74</span>pp</p>
+            <p class="day-oneliner">A premium, fast-paced speedboat cruise up the Saigon River to visit the historic Cu Chi Tunnels.</p>
+            <input type="checkbox" class="sr-check" id="more-activity-14">
+            <label for="more-activity-14" class="show-more-label"><span class="sml-more">Show more</span><span class="sml-less">Show less</span></label>
+            <div class="day-expanded">
+              <p>Avoids hours of gridlocked highway traffic by skimming up the river on a luxury speedboat. Includes a full breakfast and traditional lunch on board, arriving at the tunnels before the tour bus crowds.</p>
+              <p class="day-url"><a href="https://lesrivesexperience.com" target="_blank" rel="noopener">https://lesrivesexperience.com</a></p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="relative mb-8">
+        <div class="absolute -left-8 top-1 w-3.5 h-3.5 rounded-full bg-emerald-100 ring-4 ring-sand"></div>
+        <p class="text-xs text-emerald-100 font-medium mb-1">Days 14&ndash;15</p>
+        <h3 class="font-serif text-xl text-ink-200">Mekong Delta</h3>
+        <div class="mt-2 space-y-2 text-sm text-slate-100 max-w-2xl">
+          <div class="day-item">
+            <p class="day-item-line"><span class="text-ink-100/50">Transfer</span> &mdash; <a href="https://muineprivatecar.net/tour-detail/saigon-to-cantho-by-private-car-25.html" target="_blank" rel="noopener" class="day-link">Private VIP Limousine Transfer via Mui Ne Private Car</a>, <span class="price-aud">$160</span><span class="price-gbp">£85</span> total</p>
+            <p class="day-oneliner">A premium, private chauffeured VIP DCar Limousine transfer door-to-door from your Saigon hotel to your Can Tho island resort.</p>
+            <input type="checkbox" class="sr-check" id="more-transfer-27">
+            <label for="more-transfer-27" class="show-more-label"><span class="sml-more">Show more</span><span class="sml-less">Show less</span></label>
+            <div class="day-expanded">
+              <p>Travel in ultimate comfort inside a luxury vehicle custom-retrofitted with plush leather captain&rsquo;s chairs, electronic device charge ports, and dual-zone air conditioning. Avoid the stress of local traffic as your professional driver handles the 4-hour highway journey to the Mekong Delta, including all road tolls and custom rest stops along the way.</p>
+              <p class="day-url"><a href="https://muineprivatecar.net/tour-detail/saigon-to-cantho-by-private-car-25.html" target="_blank" rel="noopener">https://muineprivatecar.net/tour-detail/saigon-to-cantho-by-private-car-25.html</a></p>
+            </div>
+          </div>
+          <div class="day-item">
+            <p class="day-item-line"><span class="text-ink-100/50">Hotel</span> &mdash; <a href="https://azerai.com" target="_blank" rel="noopener" class="day-link">Azerai Can Tho</a>, <span class="price-aud">$340</span><span class="price-gbp">£180</span>/night</p>
+            <p class="day-oneliner">A private, ultra-exclusive luxury eco-resort hidden away on a secluded islet in the Mekong Delta.</p>
+            <input type="checkbox" class="sr-check" id="more-hotel-15">
+            <label for="more-hotel-15" class="show-more-label"><span class="sml-more">Show more</span><span class="sml-less">Show less</span></label>
+            <div class="day-expanded">
+              <p>Accessible only by boat, this sprawling retreat features minimalist, high-end bungalows set under massive banyan trees, offering ultimate privacy and a world-class wellness centre.</p>
+              <p class="day-url"><a href="https://azerai.com" target="_blank" rel="noopener">https://azerai.com</a></p>
+            </div>
+          </div>
+          <div class="day-item">
+            <p class="day-item-line"><span class="text-ink-100/50">Activity</span> &mdash; <a href="https://azerai.com" target="_blank" rel="noopener" class="day-link">Private Sunrise Cai Rang Floating Market Tour</a>, <span class="price-aud">$90</span><span class="price-gbp">£48</span> total</p>
+            <p class="day-oneliner">An early morning private boat excursion into the largest, most vibrant floating market in the delta.</p>
+            <input type="checkbox" class="sr-check" id="more-activity-16">
+            <label for="more-activity-16" class="show-more-label"><span class="sml-more">Show more</span><span class="sml-less">Show less</span></label>
+            <div class="day-expanded">
+              <p>Chartered directly by the resort, you will board a private wooden boat at sunrise to cruise among dozens of vessels trading local fruits and goods, enjoying fresh pineapple and hot noodle soup prepared right on the water.</p>
+              <p class="day-url"><a href="https://azerai.com" target="_blank" rel="noopener">https://azerai.com</a></p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="relative mb-8">
+        <div class="absolute -left-8 top-1 w-3.5 h-3.5 rounded-full bg-emerald-100 ring-4 ring-sand"></div>
+        <p class="text-xs text-emerald-100 font-medium mb-1">Day 16</p>
+        <h3 class="font-serif text-xl text-ink-200">Phnom Penh</h3>
+        <div class="mt-2 space-y-2 text-sm text-slate-100 max-w-2xl">
+          <div class="day-item">
+            <p class="day-item-line"><span class="text-ink-100/50">Transfer</span> &mdash; <a href="https://www.booking.com" target="_blank" rel="noopener" class="day-link">Cross-Border Luxury Private Car</a>, <span class="price-aud">$220</span><span class="price-gbp">£117</span> total</p>
+            <p class="day-oneliner">A seamless, private overland transfer from Can Tho across the international border directly into Phnom Penh.</p>
+            <input type="checkbox" class="sr-check" id="more-transfer-18">
+            <label for="more-transfer-18" class="show-more-label"><span class="sml-more">Show more</span><span class="sml-less">Show less</span></label>
+            <div class="day-expanded">
+              <p>A dedicated private car and driver handle the full crossing via Tinh Bien, taking care of border formalities so you can settle in before arriving at the hotel.</p>
+              <p class="day-url"><a href="https://www.booking.com" target="_blank" rel="noopener">https://www.booking.com</a></p>
+            </div>
+          </div>
+          <div class="day-item">
+            <p class="day-item-line"><span class="text-ink-100/50">Hotel</span> &mdash; <a href="https://rosewoodhotels.com" target="_blank" rel="noopener" class="day-link">Rosewood Phnom Penh</a>, <span class="price-aud">$280</span><span class="price-gbp">£148</span>/night</p>
+            <p class="day-oneliner">A soaring, ultra-modern luxury sanctuary overlooking the Mekong River from the city&rsquo;s iconic skyscraper.</p>
+            <input type="checkbox" class="sr-check" id="more-hotel-17">
+            <label for="more-hotel-17" class="show-more-label"><span class="sml-more">Show more</span><span class="sml-less">Show less</span></label>
+            <div class="day-expanded">
+              <p>Blends sleek contemporary design with subtle Khmer accents. Features the famous Sora sky bar jutting out over the city edge and an exquisite indoor pool.</p>
+              <p class="day-url"><a href="https://rosewoodhotels.com" target="_blank" rel="noopener">https://rosewoodhotels.com</a></p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="relative mb-8">
+        <div class="absolute -left-8 top-1 w-3.5 h-3.5 rounded-full bg-emerald-100 ring-4 ring-sand"></div>
+        <p class="text-xs text-emerald-100 font-medium mb-1">Days 17&ndash;20</p>
+        <h3 class="font-serif text-xl text-ink-200">Siem Reap</h3>
+        <div class="mt-2 space-y-2 text-sm text-slate-100 max-w-2xl">
+          <div class="day-item">
+            <p class="day-item-line"><span class="text-ink-100/50">Flight</span> &mdash; Flight 2, Saigon to Siem Reap, Vietnam Airlines, <span class="price-aud">$240</span><span class="price-gbp">£127</span>pp</p>
+          </div>
+          <div class="day-item">
+            <p class="day-item-line"><span class="text-ink-100/50">Hotel</span> &mdash; <a href="https://angkorvillagehotel.asia/" target="_blank" rel="noopener" class="day-link">Angkor Village Hotel</a>, <span class="price-aud">$400</span><span class="price-gbp">£212</span>/night</p>
+            <p class="day-oneliner">A tranquil, family-owned tropical garden retreat with authentic Khmer-style architecture in the heart of downtown Siem Reap.</p>
+            <input type="checkbox" class="sr-check" id="more-hotel-19">
+            <label for="more-hotel-19" class="show-more-label"><span class="sml-more">Show more</span><span class="sml-less">Show less</span></label>
+            <div class="day-expanded">
+              <p>With its lush tropical gardens, The Angkor Village Hotel is a tranquil oasis in the vibrant heart of downtown Siem Reap; the gateway to the UNESCO World Heritage Site. A small family-owned and operated property founded on authenticity and charm, the Hotel&rsquo;s unique architecture is an homage to traditional Khmer style. Our 43 rooms, swimming pool, restaurant, theatre and wellness options were designed with respect for local culture, and nature.</p>
+              <p class="day-url"><a href="https://angkorvillagehotel.asia/" target="_blank" rel="noopener">https://angkorvillagehotel.asia/</a></p>
+            </div>
+          </div>
+          <div class="day-item">
+            <p class="day-item-line"><span class="text-ink-100/50">Activity</span> &mdash; <a href="https://angkorguides.com" target="_blank" rel="noopener" class="day-link">Private Angkor Wat Sunrise Historian Tour</a>, <span class="price-aud">$110</span><span class="price-gbp">£58</span>pp + pass</p>
+            <p class="day-oneliner">An unforgettable, privately guided sunrise exploration of the massive Angkor temple complex.</p>
+            <input type="checkbox" class="sr-check" id="more-activity-20">
+            <label for="more-activity-20" class="show-more-label"><span class="sml-more">Show more</span><span class="sml-less">Show less</span></label>
+            <div class="day-expanded">
+              <p>Led by a professional archaeological historian, witness the sun rise directly behind the towers of Angkor Wat before entering the ancient corridors early to beat the crowds. Covers Bayon and the root-strangled Ta Prohm temple.</p>
+              <p class="day-url"><a href="https://angkorguides.com" target="_blank" rel="noopener">https://angkorguides.com</a></p>
+            </div>
+          </div>
+          <div class="day-item">
+            <p class="day-item-line"><span class="text-ink-100/50">Activity</span> &mdash; <a href="https://angkorguides.com" target="_blank" rel="noopener" class="day-link">Tonle Sap Lake Stilted Village Boat Cruise</a>, <span class="price-aud">$70</span><span class="price-gbp">£37</span>pp</p>
+            <p class="day-oneliner">A private afternoon boat journey to witness local life in the stilted water-town of Kompong Phluk.</p>
+            <input type="checkbox" class="sr-check" id="more-activity-21">
+            <label for="more-activity-21" class="show-more-label"><span class="sml-more">Show more</span><span class="sml-less">Show less</span></label>
+            <div class="day-expanded">
+              <p>Board a private boat to explore this massive lake community where houses sit on towering 10-metre stilts, learning how local fishing families adapt to the dramatic seasonal water shifts.</p>
+              <p class="day-url"><a href="https://angkorguides.com" target="_blank" rel="noopener">https://angkorguides.com</a></p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="relative mb-8">
+        <div class="absolute -left-8 top-1 w-3.5 h-3.5 rounded-full bg-gold ring-4 ring-sand"></div>
+        <p class="text-xs text-emerald-100 font-medium mb-1">Days 21&ndash;25</p>
+        <h3 class="font-serif text-xl text-ink-200">Phuket</h3>
+        <div class="mt-2 space-y-2 text-sm text-slate-100 max-w-2xl">
+          <div class="day-item">
+            <p class="day-item-line"><span class="text-ink-100/50">Flight</span> &mdash; Flight 3, Siem Reap to Phuket via Bangkok, Bangkok Airways, <span class="price-aud">$310</span><span class="price-gbp">£164</span>pp</p>
+          </div>
+          <div class="day-item">
+            <p class="day-item-line"><span class="text-ink-100/50">Hotel</span> &mdash; <a href="https://pavilionshotels.com" target="_blank" rel="noopener" class="day-link">The Pavilions Phuket</a>, <span class="price-aud">$460</span><span class="price-gbp">£244</span>/night</p>
+            <p class="day-oneliner">An exclusive, romantic hilltop sanctuary featuring massive private pool villas overlooking the Andaman Sea.</p>
+            <input type="checkbox" class="sr-check" id="more-hotel-22">
+            <label for="more-hotel-22" class="show-more-label"><span class="sml-more">Show more</span><span class="sml-less">Show less</span></label>
+            <div class="day-expanded">
+              <p>Perched high above Layan Beach, this premium property offers complete intimacy for couples with large private infinity pools, award-winning dining, and complete isolation from the commercial tourist hubs.</p>
+              <p class="day-url"><a href="https://pavilionshotels.com" target="_blank" rel="noopener">https://pavilionshotels.com</a></p>
+            </div>
+          </div>
+          <div class="day-item">
+            <p class="day-item-line"><span class="text-ink-100/50">Activity</span> &mdash; <a href="https://5starmarinephuket.com" target="_blank" rel="noopener" class="day-link">Phang Nga Bay Luxury Catamaran Cruise by 5 Star Marine</a>, <span class="price-aud">$190</span><span class="price-gbp">£101</span>pp</p>
+            <p class="day-oneliner">A premium, semi-private catamaran voyage exploring the towering limestone karsts of Phang Nga Bay.</p>
+            <input type="checkbox" class="sr-check" id="more-activity-23">
+            <label for="more-activity-23" class="show-more-label"><span class="sml-more">Show more</span><span class="sml-less">Show less</span></label>
+            <div class="day-expanded">
+              <p>Cruise in style to avoid the crowded speedboats. Includes sea kayaking into hidden limestone caves (hongs), swimming in pristine lagoons, and visiting the iconic James Bond Island.</p>
+              <p class="day-url"><a href="https://5starmarinephuket.com" target="_blank" rel="noopener">https://5starmarinephuket.com</a></p>
+            </div>
+          </div>
+          <div class="day-item">
+            <p class="day-item-line"><span class="text-ink-100/50">Activity</span> &mdash; <a href="https://blueelephant.com" target="_blank" rel="noopener" class="day-link">Phuket Old Town Heritage Walk &amp; Blue Elephant Dinner</a>, <span class="price-aud">$130</span><span class="price-gbp">£69</span>pp</p>
+            <p class="day-oneliner">An afternoon walking tour of vibrant Sino-Portuguese architecture ending with an elegant fine-dining dinner.</p>
+            <input type="checkbox" class="sr-check" id="more-activity-24">
+            <label for="more-activity-24" class="show-more-label"><span class="sml-more">Show more</span><span class="sml-less">Show less</span></label>
+            <div class="day-expanded">
+              <p>Stroll down the historic, pastel-coloured streets of Old Phuket Town before heading to the historic Governor&rsquo;s Mansion for a multi-course Thai royal cuisine dining experience at Blue Elephant.</p>
+              <p class="day-url"><a href="https://blueelephant.com" target="_blank" rel="noopener">https://blueelephant.com</a></p>
+            </div>
+          </div>
+          <div class="day-item">
+            <p class="day-item-line"><span class="text-ink-100/50">Transfer</span> &mdash; <a href="https://phuket.limo/" target="_blank" rel="noopener" class="day-link">Airport Limousine Transfer via Phuket Limo</a>, departure</p>
+            <p class="day-oneliner">A fully licensed, premium private airport vehicle transfer from your resort straight to the HKT departure gates.</p>
+            <input type="checkbox" class="sr-check" id="more-transfer-26">
+            <label for="more-transfer-26" class="show-more-label"><span class="sml-more">Show more</span><span class="sml-less">Show less</span></label>
+            <div class="day-expanded">
+              <p>Conclude your trip with complete peace of mind. Sidestep local taxi negotiations by riding in a fully insured, legal, and air-conditioned private sedan or SUV operated by professional drivers, ensuring you arrive perfectly on time for your long-haul flight back home to Australia.</p>
+              <p class="day-url"><a href="https://phuket.limo/" target="_blank" rel="noopener">https://phuket.limo/</a></p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- ============ TAB 3: TRANSPORT ============ -->
+  <section id="tab-transport" class="panel" role="tabpanel">
+    <h2 class="font-serif text-2xl text-ink-200 mb-1">Getting between stops</h2>
+    <p class="text-sm text-slate-100 mb-8">Every flight, train and private transfer that stitches the route together.</p>
+
+    <div class="mb-9">
+      <h3 class="font-serif text-lg text-emerald-100 mb-3">Flights</h3>
+      <div class="space-y-2">
+        <div class="flex flex-wrap items-center justify-between gap-2 bg-white/50 border hairline rounded-lg px-4 py-3">
+          <div>
+            <p class="text-ink-200 font-medium text-sm">Flight 1 &mdash; Danang to Saigon</p>
+            <p class="text-xs text-slate-100/80 mt-0.5">Vietnam Airlines &middot; flight no. TBC</p>
+          </div>
+          <p class="text-sm text-ink-200"><span class="price-aud">$110</span><span class="price-gbp">£58</span>pp</p>
+        </div>
+        <div class="flex flex-wrap items-center justify-between gap-2 bg-white/50 border hairline rounded-lg px-4 py-3">
+          <div>
+            <p class="text-ink-200 font-medium text-sm">Flight 2 &mdash; Saigon to Siem Reap</p>
+            <p class="text-xs text-slate-100/80 mt-0.5">Vietnam Airlines &middot; flight no. TBC</p>
+          </div>
+          <p class="text-sm text-ink-200"><span class="price-aud">$240</span><span class="price-gbp">£127</span>pp</p>
+        </div>
+        <div class="flex flex-wrap items-center justify-between gap-2 bg-white/50 border hairline rounded-lg px-4 py-3">
+          <div>
+            <p class="text-ink-200 font-medium text-sm">Flight 3 &mdash; Siem Reap to Phuket, via Bangkok</p>
+            <p class="text-xs text-slate-100/80 mt-0.5">Bangkok Airways &middot; flight no. TBC</p>
+          </div>
+          <p class="text-sm text-ink-200"><span class="price-aud">$310</span><span class="price-gbp">£164</span>pp</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="mb-9">
+      <h3 class="font-serif text-lg text-emerald-100 mb-3">Trains</h3>
+      <div class="bg-white/50 border hairline rounded-lg px-4 py-3">
+        <p class="text-ink-200 font-medium text-sm">Hanoi to Hue &mdash; overnight, service SE19</p>
+        <p class="text-xs text-slate-100/80 mt-0.5">Laman Express &middot; Private 2-Berth VIP cabin, ensuite</p>
+      </div>
+    </div>
+
+    <div>
+      <h3 class="font-serif text-lg text-emerald-100 mb-3">Private cars</h3>
+      <div class="space-y-2">
+        <div class="bg-white/50 border hairline rounded-lg px-4 py-3">
+          <p class="text-ink-200 font-medium text-sm">Luxury D-Car</p>
+          <p class="text-xs text-slate-100/80 mt-0.5">Hanoi &harr; Lan Ha Bay transfer</p>
+        </div>
+        <div class="bg-white/50 border hairline rounded-lg px-4 py-3">
+          <p class="text-ink-200 font-medium text-sm">Private car, Hai Van Pass</p>
+          <p class="text-xs text-slate-100/80 mt-0.5">Hue &harr; Hoi An, coastal mountain route</p>
+        </div>
+        <div class="bg-white/50 border hairline rounded-lg px-4 py-3">
+          <p class="text-ink-200 font-medium text-sm">Private Mercedes</p>
+          <p class="text-xs text-slate-100/80 mt-0.5">Saigon &harr; Can Tho</p>
+        </div>
+        <div class="bg-white/50 border hairline rounded-lg px-4 py-3">
+          <p class="text-ink-200 font-medium text-sm">Private cross-border sedan</p>
+          <p class="text-xs text-slate-100/80 mt-0.5">Can Tho &harr; Phnom Penh, via Tinh Bien</p>
+        </div>
+        <div class="bg-white/50 border hairline rounded-lg px-4 py-3">
+          <p class="text-ink-200 font-medium text-sm">Airport limousine</p>
+          <p class="text-xs text-slate-100/80 mt-0.5">Phuket, final departure transfer</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ TAB 4: ROUTE MAP ============ -->
+  <section id="tab-map" class="panel" role="tabpanel">
+    <h2 class="font-serif text-2xl text-ink-200 mb-1">The route</h2>
+    <p class="text-sm text-slate-100 mb-6">Plotted to scale and true north, tap or hover a stop for how many nights you&rsquo;ll spend there.</p>
+
+    <div class="bg-ink-100 rounded-xl p-4 sm:p-6">
+      <div class="map-frame">
+      <svg viewBox="0 0 680 900" class="w-full" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Map of the route from Hanoi through Vietnam and Cambodia to Phuket, oriented with north at the top">
+
+        <!-- sea -->
+        <rect width="680" height="900" fill="#0F2420"/>
+        <rect width="680" height="900" fill="url(#seaTexture)"/>
+
+        <defs>
+          <pattern id="seaTexture" width="40" height="40" patternUnits="userSpaceOnUse">
+            <path d="M0,20 Q10,15 20,20 T40,20" fill="none" stroke="#F1E9D6" stroke-width="0.4" opacity="0.05"/>
+          </pattern>
+        </defs>
+
+        <!-- graticule (lat/lon grid) -->
+          <line x1="117.0" y1="70" x2="117.0" y2="830" stroke="#F1E9D6" stroke-width="0.6" opacity="0.12"/>
+          <text x="120.0" y="62" fill="#F1E9D6" font-size="8" font-family="Inter, sans-serif" opacity="0.35">99&#176;E</text>
+          <line x1="210.9" y1="70" x2="210.9" y2="830" stroke="#F1E9D6" stroke-width="0.6" opacity="0.12"/>
+          <text x="213.9" y="62" fill="#F1E9D6" font-size="8" font-family="Inter, sans-serif" opacity="0.35">101&#176;E</text>
+          <line x1="304.8" y1="70" x2="304.8" y2="830" stroke="#F1E9D6" stroke-width="0.6" opacity="0.12"/>
+          <text x="307.8" y="62" fill="#F1E9D6" font-size="8" font-family="Inter, sans-serif" opacity="0.35">103&#176;E</text>
+          <line x1="398.7" y1="70" x2="398.7" y2="830" stroke="#F1E9D6" stroke-width="0.6" opacity="0.12"/>
+          <text x="401.7" y="62" fill="#F1E9D6" font-size="8" font-family="Inter, sans-serif" opacity="0.35">105&#176;E</text>
+          <line x1="492.6" y1="70" x2="492.6" y2="830" stroke="#F1E9D6" stroke-width="0.6" opacity="0.12"/>
+          <text x="495.6" y="62" fill="#F1E9D6" font-size="8" font-family="Inter, sans-serif" opacity="0.35">107&#176;E</text>
+          <line x1="586.5" y1="70" x2="586.5" y2="830" stroke="#F1E9D6" stroke-width="0.6" opacity="0.12"/>
+          <text x="589.5" y="62" fill="#F1E9D6" font-size="8" font-family="Inter, sans-serif" opacity="0.35">109&#176;E</text>
+          <line x1="70" y1="748.6" x2="610" y2="748.6" stroke="#F1E9D6" stroke-width="0.6" opacity="0.12"/>
+          <text x="38" y="751.6" fill="#F1E9D6" font-size="8" font-family="Inter, sans-serif" opacity="0.35">9&#176;N</text>
+          <line x1="70" y1="640.0" x2="610" y2="640.0" stroke="#F1E9D6" stroke-width="0.6" opacity="0.12"/>
+          <text x="38" y="643.0" fill="#F1E9D6" font-size="8" font-family="Inter, sans-serif" opacity="0.35">11&#176;N</text>
+          <line x1="70" y1="531.4" x2="610" y2="531.4" stroke="#F1E9D6" stroke-width="0.6" opacity="0.12"/>
+          <text x="38" y="534.4" fill="#F1E9D6" font-size="8" font-family="Inter, sans-serif" opacity="0.35">13&#176;N</text>
+          <line x1="70" y1="422.9" x2="610" y2="422.9" stroke="#F1E9D6" stroke-width="0.6" opacity="0.12"/>
+          <text x="38" y="425.9" fill="#F1E9D6" font-size="8" font-family="Inter, sans-serif" opacity="0.35">15&#176;N</text>
+          <line x1="70" y1="314.3" x2="610" y2="314.3" stroke="#F1E9D6" stroke-width="0.6" opacity="0.12"/>
+          <text x="38" y="317.3" fill="#F1E9D6" font-size="8" font-family="Inter, sans-serif" opacity="0.35">17&#176;N</text>
+          <line x1="70" y1="205.7" x2="610" y2="205.7" stroke="#F1E9D6" stroke-width="0.6" opacity="0.12"/>
+          <text x="38" y="208.7" fill="#F1E9D6" font-size="8" font-family="Inter, sans-serif" opacity="0.35">19&#176;N</text>
+          <line x1="70" y1="97.1" x2="610" y2="97.1" stroke="#F1E9D6" stroke-width="0.6" opacity="0.12"/>
+          <text x="38" y="100.1" fill="#F1E9D6" font-size="8" font-family="Inter, sans-serif" opacity="0.35">21&#176;N</text>
+
+        <!-- landmass, tonal bands plotted from real coordinates (coast, mid-elevation, highland) -->
+        <path d="M445.7,70.0 L497.3,102.6 L441.0,162.3 L436.3,249.1 L469.1,287.1 L497.3,325.1 L549.0,368.6 L581.8,422.9 L595.9,488.0 L595.9,574.9 L563.0,640.0 L497.3,678.0 L478.5,650.9 L459.7,721.4 L403.4,748.6 L375.2,705.1 L365.8,661.7 L347.0,645.4 L328.3,661.7 L300.1,623.7 L257.8,553.1 L206.2,531.4 L163.9,553.1 L140.4,596.6 L131.0,667.1 L131.0,743.1 L112.3,797.4 L88.8,808.8 L117.0,721.4 L117.0,422.9 L140.4,260.0 L187.4,97.1 Z" fill="#1B3630"/>
+        <path d="M431.5,132.6 L475.9,160.6 L427.5,211.9 L423.4,286.6 L451.6,319.3 L475.9,351.9 L520.4,389.4 L548.6,436.1 L560.7,492.0 L560.7,566.8 L532.4,622.8 L475.9,655.4 L459.7,632.1 L443.6,692.8 L395.1,716.2 L370.9,678.7 L362.8,641.4 L346.6,627.4 L330.6,641.4 L306.3,608.7 L269.9,548.0 L225.5,529.4 L189.2,548.0 L169.0,585.4 L160.9,646.1 L160.9,711.4 L144.8,758.1 L124.6,767.9 L148.8,692.8 L148.8,436.1 L169.0,296.0 L209.4,155.9 Z" fill="#20423A"/>
+        <path d="M417.3,195.1 L454.5,218.6 L414.0,261.6 L410.6,324.1 L434.2,351.4 L454.5,378.8 L491.7,410.1 L515.3,449.2 L525.5,496.1 L525.5,558.6 L501.8,605.5 L454.5,632.9 L441.0,613.4 L427.4,664.1 L386.9,683.7 L366.6,652.4 L359.8,621.1 L346.3,609.4 L332.8,621.1 L312.5,593.8 L282.0,542.9 L244.9,527.3 L214.4,542.9 L197.5,574.3 L190.8,625.0 L190.8,679.7 L177.3,718.8 L160.4,727.1 L180.7,664.1 L180.7,449.2 L197.5,331.9 L231.4,214.6 Z" fill="#26493F"/>
+        <path d="M445.7,70.0 L497.3,102.6 L441.0,162.3 L436.3,249.1 L469.1,287.1 L497.3,325.1 L549.0,368.6 L581.8,422.9 L595.9,488.0 L595.9,574.9 L563.0,640.0 L497.3,678.0 L478.5,650.9 L459.7,721.4 L403.4,748.6 L375.2,705.1 L365.8,661.7 L347.0,645.4 L328.3,661.7 L300.1,623.7 L257.8,553.1 L206.2,531.4 L163.9,553.1 L140.4,596.6 L131.0,667.1 L131.0,743.1 L112.3,797.4 L88.8,808.8 L117.0,721.4 L117.0,422.9 L140.4,260.0 L187.4,97.1 Z" fill="none" stroke="#5C8B79" stroke-width="1.1" opacity="0.6"/>
+
+        <!-- terrain hachures over mountain ranges -->
+          <line x1="359.8" y1="141.5" x2="360.9" y2="150.5" stroke="#1D3B34" stroke-width="1.3" opacity="0.4" stroke-linecap="round"/>
+          <line x1="392.3" y1="166.1" x2="391.3" y2="175.1" stroke="#1D3B34" stroke-width="1.3" opacity="0.4" stroke-linecap="round"/>
+          <line x1="389.9" y1="167.5" x2="386.6" y2="176.5" stroke="#1D3B34" stroke-width="1.3" opacity="0.4" stroke-linecap="round"/>
+          <line x1="352.9" y1="130.8" x2="350.0" y2="139.8" stroke="#1D3B34" stroke-width="1.3" opacity="0.4" stroke-linecap="round"/>
+          <line x1="416.9" y1="131.7" x2="414.2" y2="140.7" stroke="#1D3B34" stroke-width="1.3" opacity="0.4" stroke-linecap="round"/>
+          <line x1="400.1" y1="151.3" x2="403.3" y2="160.3" stroke="#1D3B34" stroke-width="1.3" opacity="0.4" stroke-linecap="round"/>
+          <line x1="380.6" y1="116.8" x2="384.0" y2="125.8" stroke="#1D3B34" stroke-width="1.3" opacity="0.4" stroke-linecap="round"/>
+          <line x1="419.6" y1="168.6" x2="418.1" y2="177.6" stroke="#1D3B34" stroke-width="1.3" opacity="0.4" stroke-linecap="round"/>
+          <line x1="357.0" y1="159.0" x2="355.6" y2="168.0" stroke="#1D3B34" stroke-width="1.3" opacity="0.4" stroke-linecap="round"/>
+          <line x1="362.3" y1="93.4" x2="362.9" y2="102.4" stroke="#1D3B34" stroke-width="1.3" opacity="0.4" stroke-linecap="round"/>
+          <line x1="378.5" y1="110.7" x2="378.8" y2="119.7" stroke="#1D3B34" stroke-width="1.3" opacity="0.4" stroke-linecap="round"/>
+          <line x1="352.1" y1="167.0" x2="350.0" y2="176.0" stroke="#1D3B34" stroke-width="1.3" opacity="0.4" stroke-linecap="round"/>
+          <line x1="383.2" y1="106.7" x2="381.9" y2="115.7" stroke="#1D3B34" stroke-width="1.3" opacity="0.4" stroke-linecap="round"/>
+          <line x1="385.3" y1="115.9" x2="383.9" y2="124.9" stroke="#1D3B34" stroke-width="1.3" opacity="0.4" stroke-linecap="round"/>
+          <line x1="406.1" y1="95.5" x2="404.3" y2="104.5" stroke="#1D3B34" stroke-width="1.3" opacity="0.4" stroke-linecap="round"/>
+          <line x1="391.4" y1="117.0" x2="394.1" y2="126.0" stroke="#1D3B34" stroke-width="1.3" opacity="0.4" stroke-linecap="round"/>
+          <line x1="371.4" y1="101.9" x2="374.9" y2="110.9" stroke="#1D3B34" stroke-width="1.3" opacity="0.4" stroke-linecap="round"/>
+          <line x1="382.4" y1="161.6" x2="384.3" y2="170.6" stroke="#1D3B34" stroke-width="1.3" opacity="0.4" stroke-linecap="round"/>
+          <line x1="388.4" y1="158.3" x2="385.1" y2="167.3" stroke="#1D3B34" stroke-width="1.3" opacity="0.4" stroke-linecap="round"/>
+          <line x1="411.7" y1="107.8" x2="412.2" y2="116.8" stroke="#1D3B34" stroke-width="1.3" opacity="0.4" stroke-linecap="round"/>
+          <line x1="373.6" y1="87.6" x2="375.0" y2="96.6" stroke="#1D3B34" stroke-width="1.3" opacity="0.4" stroke-linecap="round"/>
+          <line x1="396.1" y1="115.1" x2="395.8" y2="124.1" stroke="#1D3B34" stroke-width="1.3" opacity="0.4" stroke-linecap="round"/>
+          <line x1="520.8" y1="308.2" x2="520.6" y2="317.2" stroke="#1D3B34" stroke-width="1.3" opacity="0.4" stroke-linecap="round"/>
+          <line x1="446.1" y1="325.4" x2="447.6" y2="334.4" stroke="#1D3B34" stroke-width="1.3" opacity="0.4" stroke-linecap="round"/>
+          <line x1="524.9" y1="327.1" x2="527.2" y2="336.1" stroke="#1D3B34" stroke-width="1.3" opacity="0.4" stroke-linecap="round"/>
+          <line x1="473.6" y1="362.5" x2="474.8" y2="371.5" stroke="#1D3B34" stroke-width="1.3" opacity="0.4" stroke-linecap="round"/>
+          <line x1="480.0" y1="388.1" x2="477.6" y2="397.1" stroke="#1D3B34" stroke-width="1.3" opacity="0.4" stroke-linecap="round"/>
+          <line x1="445.9" y1="378.8" x2="447.8" y2="387.8" stroke="#1D3B34" stroke-width="1.3" opacity="0.4" stroke-linecap="round"/>
+          <line x1="461.9" y1="377.6" x2="461.1" y2="386.6" stroke="#1D3B34" stroke-width="1.3" opacity="0.4" stroke-linecap="round"/>
+          <line x1="447.8" y1="305.1" x2="447.4" y2="314.1" stroke="#1D3B34" stroke-width="1.3" opacity="0.4" stroke-linecap="round"/>
+          <line x1="515.6" y1="336.6" x2="517.9" y2="345.6" stroke="#1D3B34" stroke-width="1.3" opacity="0.4" stroke-linecap="round"/>
+          <line x1="464.5" y1="305.9" x2="463.9" y2="314.9" stroke="#1D3B34" stroke-width="1.3" opacity="0.4" stroke-linecap="round"/>
+          <line x1="515.7" y1="355.2" x2="519.0" y2="364.2" stroke="#1D3B34" stroke-width="1.3" opacity="0.4" stroke-linecap="round"/>
+          <line x1="455.9" y1="375.5" x2="454.0" y2="384.5" stroke="#1D3B34" stroke-width="1.3" opacity="0.4" stroke-linecap="round"/>
+          <line x1="481.9" y1="367.5" x2="482.5" y2="376.5" stroke="#1D3B34" stroke-width="1.3" opacity="0.4" stroke-linecap="round"/>
+          <line x1="441.3" y1="364.6" x2="440.7" y2="373.6" stroke="#1D3B34" stroke-width="1.3" opacity="0.4" stroke-linecap="round"/>
+          <line x1="488.8" y1="354.2" x2="492.1" y2="363.2" stroke="#1D3B34" stroke-width="1.3" opacity="0.4" stroke-linecap="round"/>
+          <line x1="484.5" y1="322.8" x2="485.3" y2="331.8" stroke="#1D3B34" stroke-width="1.3" opacity="0.4" stroke-linecap="round"/>
+          <line x1="445.5" y1="324.2" x2="448.4" y2="333.2" stroke="#1D3B34" stroke-width="1.3" opacity="0.4" stroke-linecap="round"/>
+          <line x1="514.9" y1="314.1" x2="517.0" y2="323.1" stroke="#1D3B34" stroke-width="1.3" opacity="0.4" stroke-linecap="round"/>
+          <line x1="259.6" y1="513.6" x2="257.1" y2="521.6" stroke="#1D3B34" stroke-width="1.3" opacity="0.4" stroke-linecap="round"/>
+          <line x1="234.3" y1="492.6" x2="231.5" y2="500.6" stroke="#1D3B34" stroke-width="1.3" opacity="0.4" stroke-linecap="round"/>
+          <line x1="241.8" y1="529.6" x2="240.8" y2="537.6" stroke="#1D3B34" stroke-width="1.3" opacity="0.4" stroke-linecap="round"/>
+          <line x1="229.7" y1="543.1" x2="227.5" y2="551.1" stroke="#1D3B34" stroke-width="1.3" opacity="0.4" stroke-linecap="round"/>
+          <line x1="257.0" y1="538.9" x2="254.0" y2="546.9" stroke="#1D3B34" stroke-width="1.3" opacity="0.4" stroke-linecap="round"/>
+          <line x1="275.8" y1="471.8" x2="273.6" y2="479.8" stroke="#1D3B34" stroke-width="1.3" opacity="0.4" stroke-linecap="round"/>
+          <line x1="255.8" y1="525.8" x2="254.9" y2="533.8" stroke="#1D3B34" stroke-width="1.3" opacity="0.4" stroke-linecap="round"/>
+          <line x1="293.4" y1="537.0" x2="296.6" y2="545.0" stroke="#1D3B34" stroke-width="1.3" opacity="0.4" stroke-linecap="round"/>
+          <line x1="266.0" y1="507.2" x2="263.3" y2="515.2" stroke="#1D3B34" stroke-width="1.3" opacity="0.4" stroke-linecap="round"/>
+          <line x1="255.4" y1="538.8" x2="253.9" y2="546.8" stroke="#1D3B34" stroke-width="1.3" opacity="0.4" stroke-linecap="round"/>
+          <line x1="179.1" y1="197.2" x2="176.0" y2="205.2" stroke="#1D3B34" stroke-width="1.3" opacity="0.4" stroke-linecap="round"/>
+          <line x1="213.5" y1="183.9" x2="211.2" y2="191.9" stroke="#1D3B34" stroke-width="1.3" opacity="0.4" stroke-linecap="round"/>
+          <line x1="166.5" y1="228.2" x2="166.7" y2="236.2" stroke="#1D3B34" stroke-width="1.3" opacity="0.4" stroke-linecap="round"/>
+          <line x1="245.0" y1="180.9" x2="246.3" y2="188.9" stroke="#1D3B34" stroke-width="1.3" opacity="0.4" stroke-linecap="round"/>
+          <line x1="198.4" y1="258.8" x2="196.3" y2="266.8" stroke="#1D3B34" stroke-width="1.3" opacity="0.4" stroke-linecap="round"/>
+          <line x1="213.9" y1="203.3" x2="215.7" y2="211.3" stroke="#1D3B34" stroke-width="1.3" opacity="0.4" stroke-linecap="round"/>
+          <line x1="184.9" y1="251.4" x2="186.9" y2="259.4" stroke="#1D3B34" stroke-width="1.3" opacity="0.4" stroke-linecap="round"/>
+          <line x1="244.0" y1="180.2" x2="246.0" y2="188.2" stroke="#1D3B34" stroke-width="1.3" opacity="0.4" stroke-linecap="round"/>
+          <line x1="233.4" y1="198.3" x2="231.7" y2="206.3" stroke="#1D3B34" stroke-width="1.3" opacity="0.4" stroke-linecap="round"/>
+          <line x1="197.3" y1="230.9" x2="194.3" y2="238.9" stroke="#1D3B34" stroke-width="1.3" opacity="0.4" stroke-linecap="round"/>
+          <line x1="190.2" y1="284.1" x2="188.7" y2="292.1" stroke="#1D3B34" stroke-width="1.3" opacity="0.4" stroke-linecap="round"/>
+          <line x1="253.7" y1="212.0" x2="253.4" y2="220.0" stroke="#1D3B34" stroke-width="1.3" opacity="0.4" stroke-linecap="round"/>
+          <line x1="256.7" y1="185.4" x2="259.6" y2="193.4" stroke="#1D3B34" stroke-width="1.3" opacity="0.4" stroke-linecap="round"/>
+          <line x1="184.6" y1="247.6" x2="182.9" y2="255.6" stroke="#1D3B34" stroke-width="1.3" opacity="0.4" stroke-linecap="round"/>
+
+        <!-- rivers -->
+        <path d="M347.0,26.6 L394.0,59.1 L417.5,80.9 L438.6,95.5 L464.4,102.6" fill="none" stroke="#6FA593" stroke-width="1.6" opacity="0.55" stroke-linecap="round"/>
+        <path d="M257.8,531.4 L394.0,574.9 L417.5,640.0 L426.9,672.6 L435.3,692.7 L441.0,716.0" fill="none" stroke="#6FA593" stroke-width="1.8" opacity="0.55" stroke-linecap="round"/>
+        <path d="M509.0,352.3 L516.1,345.8 L520.3,343.6" fill="none" stroke="#6FA593" stroke-width="1.3" opacity="0.55" stroke-linecap="round"/>
+
+        <!-- sea labels -->
+        <text x="600" y="220" fill="#F1E9D6" font-size="11" font-family="Inter, sans-serif" opacity="0.4" font-style="italic">South China Sea</text>
+        <text x="195" y="470" fill="#F1E9D6" font-size="11" font-family="Inter, sans-serif" opacity="0.4" font-style="italic">Gulf of Thailand</text>
+        <text x="50" y="620" fill="#F1E9D6" font-size="11" font-family="Inter, sans-serif" opacity="0.35" font-style="italic" transform="rotate(-90 50 620)">Andaman Sea</text>
+
+        <!-- compass -->
+        <g transform="translate(628,44)" opacity="0.8">
+          <circle cx="0" cy="0" r="20" fill="none" stroke="#F1E9D6" stroke-width="0.6" opacity="0.4"/>
+          <line x1="0" y1="14" x2="0" y2="-14" stroke="#F1E9D6" stroke-width="1.5"/>
+          <path d="M0,-14 L-5,-4 L5,-4 Z" fill="#C9A24B"/>
+          <text x="0" y="30" fill="#F1E9D6" font-size="11" font-family="Inter, sans-serif" text-anchor="middle" font-weight="600">N</text>
+        </g>
+
+        <!-- scale bar -->
+        <g transform="translate(70,858)" opacity="0.85">
+          <line x1="0" y1="0" x2="97.8" y2="0" stroke="#F1E9D6" stroke-width="1.5"/>
+          <line x1="0" y1="-4" x2="0" y2="4" stroke="#F1E9D6" stroke-width="1.5"/>
+          <line x1="97.8" y1="-4" x2="97.8" y2="4" stroke="#F1E9D6" stroke-width="1.5"/>
+          <text x="48.9" y="-8" fill="#F1E9D6" font-size="10" font-family="Inter, sans-serif" text-anchor="middle" opacity="0.8">200 km</text>
+        </g>
+
+        <!-- overland / rail legs -->
+        <path d="M438.6,95.5 L495.0,111.8 L520.3,343.6 L555.1,375.1" fill="none" stroke="#C9A24B" stroke-width="2.5" stroke-dasharray="1 8" stroke-linecap="round"/>
+        <path d="M475.2,649.8 L435.3,692.7 L394.9,609.6" fill="none" stroke="#C9A24B" stroke-width="2.5" stroke-dasharray="1 8" stroke-linecap="round"/>
+
+        <!-- flight legs -->
+        <path d="M555.1,375.1 Q462.3,497.1 475.2,649.8" fill="none" stroke="#F1E9D6" stroke-width="1.5" stroke-dasharray="5 5" opacity="0.6"/>
+        <path d="M394.9,609.6 Q338.9,576.6 345.2,511.9" fill="none" stroke="#F1E9D6" stroke-width="1.5" stroke-dasharray="5 5" opacity="0.6"/>
+        <path d="M345.2,511.9 Q182.9,630.9 88.8,808.8" fill="none" stroke="#F1E9D6" stroke-width="1.5" stroke-dasharray="5 5" opacity="0.6"/>
+
+        <!-- Stops -->
+        <g class="map-pin cursor-default">
+          <circle cx="438.6" cy="95.5" r="11" fill="none" stroke="#F1E9D6" stroke-width="1" opacity="0.3"/>
+          <circle cx="438.6" cy="95.5" r="7" fill="#3E8570" class="pin-dot" stroke="#0F2420" stroke-width="1.2"/>
+          <text x="452.6" y="91.5" fill="#F1E9D6" font-size="13" font-family="Inter, sans-serif" font-weight="600" text-anchor="start" style="paint-order: stroke; stroke: #0F2420; stroke-width: 3px;">Hanoi</text>
+          <g class="map-tooltip">
+            <rect x="438.6" y="107.5" width="92" height="22" rx="5" fill="#F1E9D6"/>
+            <text x="484.6" y="122.5" fill="#16302B" font-size="11" font-family="Inter, sans-serif" text-anchor="middle">2 nights</text>
+          </g>
+        </g>
+
+        <g class="map-pin cursor-default">
+          <circle cx="495.0" cy="111.8" r="11" fill="none" stroke="#F1E9D6" stroke-width="1" opacity="0.3"/>
+          <circle cx="495.0" cy="111.8" r="7" fill="#3E8570" class="pin-dot" stroke="#0F2420" stroke-width="1.2"/>
+          <text x="509.0" y="115.8" fill="#F1E9D6" font-size="13" font-family="Inter, sans-serif" font-weight="600" text-anchor="start" style="paint-order: stroke; stroke: #0F2420; stroke-width: 3px;">Lan Ha Bay</text>
+          <g class="map-tooltip">
+            <rect x="495.0" y="123.8" width="92" height="22" rx="5" fill="#F1E9D6"/>
+            <text x="541.0" y="138.8" fill="#16302B" font-size="11" font-family="Inter, sans-serif" text-anchor="middle">2 nights</text>
+          </g>
+        </g>
+
+        <g class="map-pin cursor-default">
+          <circle cx="520.3" cy="343.6" r="11" fill="none" stroke="#F1E9D6" stroke-width="1" opacity="0.3"/>
+          <circle cx="520.3" cy="343.6" r="7" fill="#C9A24B" class="pin-dot" stroke="#0F2420" stroke-width="1.2"/>
+          <text x="534.3" y="339.6" fill="#F1E9D6" font-size="13" font-family="Inter, sans-serif" font-weight="600" text-anchor="start" style="paint-order: stroke; stroke: #0F2420; stroke-width: 3px;">Hue</text>
+          <text x="534.3" y="353.6" fill="#F1E9D6" font-size="10" font-family="Inter, sans-serif" opacity="0.65" text-anchor="start">via night train</text>
+          <g class="map-tooltip">
+            <rect x="520.3" y="355.6" width="92" height="22" rx="5" fill="#F1E9D6"/>
+            <text x="566.3" y="370.6" fill="#16302B" font-size="11" font-family="Inter, sans-serif" text-anchor="middle">1 night</text>
+          </g>
+        </g>
+
+        <g class="map-pin cursor-default">
+          <circle cx="555.1" cy="375.1" r="11" fill="none" stroke="#F1E9D6" stroke-width="1" opacity="0.3"/>
+          <circle cx="555.1" cy="375.1" r="7" fill="#3E8570" class="pin-dot" stroke="#0F2420" stroke-width="1.2"/>
+          <text x="569.1" y="379.1" fill="#F1E9D6" font-size="13" font-family="Inter, sans-serif" font-weight="600" text-anchor="start" style="paint-order: stroke; stroke: #0F2420; stroke-width: 3px;">Hoi An</text>
+          <g class="map-tooltip">
+            <rect x="555.1" y="387.1" width="92" height="22" rx="5" fill="#F1E9D6"/>
+            <text x="601.1" y="402.1" fill="#16302B" font-size="11" font-family="Inter, sans-serif" text-anchor="middle">5 nights</text>
+          </g>
+        </g>
+
+        <g class="map-pin cursor-default">
+          <circle cx="475.2" cy="649.8" r="11" fill="none" stroke="#F1E9D6" stroke-width="1" opacity="0.3"/>
+          <circle cx="475.2" cy="649.8" r="7" fill="#3E8570" class="pin-dot" stroke="#0F2420" stroke-width="1.2"/>
+          <text x="461.2" y="645.8" fill="#F1E9D6" font-size="13" font-family="Inter, sans-serif" font-weight="600" text-anchor="end" style="paint-order: stroke; stroke: #0F2420; stroke-width: 3px;">Saigon</text>
+          <text x="461.2" y="659.8" fill="#F1E9D6" font-size="10" font-family="Inter, sans-serif" opacity="0.65" text-anchor="end">flight from Danang</text>
+          <g class="map-tooltip">
+            <rect x="475.2" y="661.8" width="92" height="22" rx="5" fill="#F1E9D6"/>
+            <text x="521.2" y="676.8" fill="#16302B" font-size="11" font-family="Inter, sans-serif" text-anchor="middle">2 nights</text>
+          </g>
+        </g>
+
+        <g class="map-pin cursor-default">
+          <circle cx="435.3" cy="692.7" r="11" fill="none" stroke="#F1E9D6" stroke-width="1" opacity="0.3"/>
+          <circle cx="435.3" cy="692.7" r="7" fill="#3E8570" class="pin-dot" stroke="#0F2420" stroke-width="1.2"/>
+          <text x="421.3" y="696.7" fill="#F1E9D6" font-size="13" font-family="Inter, sans-serif" font-weight="600" text-anchor="end" style="paint-order: stroke; stroke: #0F2420; stroke-width: 3px;">Mekong Delta</text>
+          <g class="map-tooltip">
+            <rect x="435.3" y="704.7" width="92" height="22" rx="5" fill="#F1E9D6"/>
+            <text x="481.3" y="719.7" fill="#16302B" font-size="11" font-family="Inter, sans-serif" text-anchor="middle">2 nights</text>
+          </g>
+        </g>
+
+        <g class="map-pin cursor-default">
+          <circle cx="394.9" cy="609.6" r="11" fill="none" stroke="#F1E9D6" stroke-width="1" opacity="0.3"/>
+          <circle cx="394.9" cy="609.6" r="7" fill="#3E8570" class="pin-dot" stroke="#0F2420" stroke-width="1.2"/>
+          <text x="408.9" y="605.6" fill="#F1E9D6" font-size="13" font-family="Inter, sans-serif" font-weight="600" text-anchor="start" style="paint-order: stroke; stroke: #0F2420; stroke-width: 3px;">Phnom Penh</text>
+          <text x="408.9" y="619.6" fill="#F1E9D6" font-size="10" font-family="Inter, sans-serif" opacity="0.65" text-anchor="start">private car crossing</text>
+          <g class="map-tooltip">
+            <rect x="394.9" y="621.6" width="92" height="22" rx="5" fill="#F1E9D6"/>
+            <text x="440.9" y="636.6" fill="#16302B" font-size="11" font-family="Inter, sans-serif" text-anchor="middle">1 night</text>
+          </g>
+        </g>
+
+        <g class="map-pin cursor-default">
+          <circle cx="345.2" cy="511.9" r="11" fill="none" stroke="#F1E9D6" stroke-width="1" opacity="0.3"/>
+          <circle cx="345.2" cy="511.9" r="7" fill="#3E8570" class="pin-dot" stroke="#0F2420" stroke-width="1.2"/>
+          <text x="331.2" y="507.9" fill="#F1E9D6" font-size="13" font-family="Inter, sans-serif" font-weight="600" text-anchor="end" style="paint-order: stroke; stroke: #0F2420; stroke-width: 3px;">Siem Reap</text>
+          <g class="map-tooltip">
+            <rect x="345.2" y="523.9" width="92" height="22" rx="5" fill="#F1E9D6"/>
+            <text x="391.2" y="538.9" fill="#16302B" font-size="11" font-family="Inter, sans-serif" text-anchor="middle">4 nights</text>
+          </g>
+        </g>
+
+        <g class="map-pin cursor-default">
+          <circle cx="88.8" cy="808.8" r="12" fill="none" stroke="#F1E9D6" stroke-width="1" opacity="0.3"/>
+          <circle cx="88.8" cy="808.8" r="8" fill="#C9A24B" class="pin-dot" stroke="#0F2420" stroke-width="1.2"/>
+          <text x="102.8" y="812.8" fill="#F1E9D6" font-size="13" font-family="Inter, sans-serif" font-weight="600" text-anchor="start" style="paint-order: stroke; stroke: #0F2420; stroke-width: 3px;">Phuket</text>
+          <text x="102.8" y="826.8" fill="#F1E9D6" font-size="10" font-family="Inter, sans-serif" opacity="0.65" text-anchor="start">via Bangkok</text>
+          <g class="map-tooltip">
+            <rect x="88.8" y="820.8" width="92" height="22" rx="5" fill="#F1E9D6"/>
+            <text x="134.8" y="835.8" fill="#16302B" font-size="11" font-family="Inter, sans-serif" text-anchor="middle">5 nights</text>
+          </g>
+        </g>
+
+      </svg>
+      </div>
+
+      <div class="flex flex-wrap gap-x-6 gap-y-2 mt-4 pt-4 border-t border-sand-50/10 text-xs text-sand-100/70">
+        <span class="inline-flex items-center gap-1.5"><span class="w-2 h-2 rounded-full bg-emerald-100 inline-block"></span> Overland / boat / rail leg</span>
+        <span class="inline-flex items-center gap-1.5"><span class="w-2 h-2 rounded-full bg-gold inline-block"></span> Rail or flight hub</span>
+        <span class="inline-flex items-center gap-1.5"><span class="w-4 border-t border-dashed border-sand-50/70 inline-block"></span> Regional flight</span>
+      </div>
+      <p class="text-xs text-sand-100/40 italic mt-3">Coastline, terrain, and rivers simplified for clarity; stop positions are plotted from real coordinates.</p>
+    </div>
+  </section>
+
+  <section id="tab-cost" class="panel" role="tabpanel">
+    <h2 class="font-serif text-2xl text-ink-200 mb-1">What it costs</h2>
+    <p class="text-sm text-slate-100 mb-8">For two people, shown in <span class="curr-aud-label">AUD</span><span class="curr-gbp-label">GBP</span>.</p>
+
+    <div class="space-y-5 mb-8">
+
+      <div>
+        <div class="flex justify-between items-baseline mb-1.5">
+          <p class="text-sm text-ink-200">Hotels &amp; cruises <span class="text-ink-100/50">&middot; 21 hotel nights + 2 cruise nights</span></p>
+          <p class="text-sm font-medium text-ink-200"><span class="opt1-price"><span class="price-aud">$8,520</span><span class="price-gbp">£4,516</span></span><span class="opt2-price"><span class="price-aud">$7,770</span><span class="price-gbp">£4,118</span></span></p>
+        </div>
+        <div class="h-2.5 rounded-full bg-white/50 overflow-hidden">
+          <div class="hotel-bar-1 h-full rounded-full bg-emerald-100" style="width:63.11%"></div>
+          <div class="hotel-bar-2 h-full rounded-full bg-emerald-100" style="width:60.94%"></div>
+        </div>
+      </div>
+
+      <div>
+        <div class="flex justify-between items-baseline mb-1.5">
+          <p class="text-sm text-ink-200">Tours &amp; activities</p>
+          <p class="text-sm font-medium text-ink-200"><span class="price-aud">$2,860</span><span class="price-gbp">£1,516</span></p>
+        </div>
+        <div class="h-2.5 rounded-full bg-white/50 overflow-hidden">
+          <div class="tours-bar-1 h-full rounded-full bg-emerald-100" style="width:21.19%"></div>
+          <div class="tours-bar-2 h-full rounded-full bg-emerald-100" style="width:22.43%"></div>
+        </div>
+      </div>
+
+      <div>
+        <div class="flex justify-between items-baseline mb-1.5">
+          <p class="text-sm text-ink-200">Regional flights</p>
+          <p class="text-sm font-medium text-ink-200"><span class="price-aud">$1,320</span><span class="price-gbp">£700</span></p>
+        </div>
+        <div class="h-2.5 rounded-full bg-white/50 overflow-hidden">
+          <div class="flights-bar-1 h-full rounded-full bg-emerald-100" style="width:9.78%"></div>
+          <div class="flights-bar-2 h-full rounded-full bg-emerald-100" style="width:10.35%"></div>
+        </div>
+      </div>
+
+      <div>
+        <div class="flex justify-between items-baseline mb-1.5">
+          <p class="text-sm text-ink-200">Trains &amp; private transfers</p>
+          <p class="text-sm font-medium text-ink-200"><span class="price-aud">$800</span><span class="price-gbp">£424</span></p>
+        </div>
+        <div class="h-2.5 rounded-full bg-white/50 overflow-hidden">
+          <div class="transfers-bar-1 h-full rounded-full bg-emerald-100" style="width:5.92%"></div>
+          <div class="transfers-bar-2 h-full rounded-full bg-emerald-100" style="width:6.28%"></div>
+        </div>
+      </div>
+
+    </div>
+
+    <div class="thread mb-6"></div>
+
+    <div class="flex items-center justify-between mb-8">
+      <p class="font-serif text-xl text-ink-200">Total, land &amp; regional air</p>
+      <p class="font-serif text-3xl text-ink-200"><span class="opt1-price"><span class="price-aud">$13,500</span><span class="price-gbp">£7,155</span></span><span class="opt2-price"><span class="price-aud">$12,750</span><span class="price-gbp">£6,758</span></span> <span class="text-base align-top curr-aud-label">AUD</span><span class="text-base align-top curr-gbp-label">GBP</span></p>
+    </div>
+
+    <div class="bg-white/50 border hairline rounded-lg px-5 py-4">
+      <p class="text-sm text-slate-100">This excludes long-haul flights from Australia and daily discretionary dining &mdash; budget separately for both.</p>
+    </div>
+  </section>
+
+</div>
+
+</body>
+</html>
